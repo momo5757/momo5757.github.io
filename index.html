@@ -1,0 +1,780 @@
+---
+layout: null
+title: wzhn.me
+---
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wu ZHenNan: ME</title>
+<link rel="apple-touch-icon-precomposed" href="{{cdn}}favicon-152.png">
+<link rel="shortcut icon" sizes="196x196" href="{{cdn}}favicon-196.png">
+<link rel='mask-icon' href='{{cdn}}favicon.svg' color='#5b3340'>
+<style>
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      margin: 0;
+      padding-bottom: 240px;
+      text-align: center;
+      font-family: "PingFangSC", "Microsoft YaHei", sans-serif;
+    }
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+    img {
+      max-width: 100%;
+    }
+    .jumbotron {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-image: url('{{cdn}}images/jumbotron.jpg');
+    }
+    .jumbotron > img {
+      display: inline-block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+    .drawer {
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 240px;
+      margin-right: -240px;
+      background-color: rgba(174, 166, 208, .75);
+      z-index: 99;
+      transition: margin 0.5s;
+    }
+    .drawer.active {
+      margin-right: 0px;
+    }
+    .drawer-menu {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      padding: 0;
+      list-style: none;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+    .drawer-menu > li {
+      margin: 20px 0;
+      font-size: 18px;
+      font-family: "PT Sans", "PingFangSC", "Microsoft YaHei", sans-serif;
+      background-color: rgba(124, 111, 174, 0);
+      transition: background-color 0.5s;
+    }
+    .drawer-menu > li > a {
+      display: block;
+      padding: 10px 0;
+    }
+    .drawer-menu > li:hover {
+      background-color: rgba(124, 111, 174, 0.5);
+    }
+    .drawer-menu > li.active {
+      background-color: rgba(124, 111, 174, 0.9);
+    }
+    .fab {
+      display: block;
+      position: fixed;
+      top: 32px;
+      right: 32px;
+      width: 40px;
+      height: 40px;
+      background-color: #f5abf1;
+      border: none;
+      border-radius: 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .fab:focus {
+      outline: none;
+    }
+    .fab-icon {
+      display: inline-block;
+      position: absolute;
+      top: 12px;
+      left: 11px;
+      width: 18px;
+      height: 16px;
+      transition: all 0.5s;
+    }
+    .fab-icon > .dash,
+    .fab-icon::before,
+    .fab-icon::after {
+      display: block;
+      position: absolute;
+      width: 18px;
+      height: 2px;
+      border-radius: 1px;
+      background-color: #fff;
+      transition: all 0.5s;
+      opacity: 1;
+    }
+    .fab-icon > .dash {
+      top: 7px;
+    }
+    .fab-icon::before {
+      content: '';
+    }
+    .fab-icon::after {
+      content: '';
+      top: 14px;
+    }
+    .drawer.active .fab-icon {
+      transform: rotate(-180deg);
+    }
+    .drawer.active .fab-icon::before {
+      width: 14px;
+      transform: translate(-2px, 2.5px) rotate(-45deg);
+    }
+    .drawer.active .fab-icon::after {
+      width: 14px;
+      transform: translate(-2px, -2.5px) rotate(45deg);
+    }
+    .fab.exit .fab-icon {
+      transform: rotate(90deg);
+    }
+    .fab.exit .fab-icon > .dash {
+      opacity: 0;
+    }
+    .fab.exit .fab-icon::before {
+      transform: translate(0, 7px) rotate(135deg);
+    }
+    .fab.exit .fab-icon::after {
+      transform: translate(0, -7px) rotate(45deg);
+    }
+    .about {
+      text-align: center;
+    }
+    .avatar {
+      margin-top: 110px;
+    }
+    .about > h3 {
+      margin: 66px 0 0 0;
+      color: #434343;
+      font-size: 24px;
+      font-weight: normal;
+    }
+    .about > h6 {
+      margin: 30px 0 0 0;
+      color: #626262;
+      font-size: 16px;
+      font-weight: lighter;
+    }
+    .row {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+    }
+    .about-item {
+      display: inline-block;
+      -ms-flex: 0 0 33%;
+      flex: 0 0 33%;
+      margin: 0;
+      text-align: center;
+    }
+    .about-item > header {
+      padding: 0;
+      margin-top: 90px;
+      font-size: 24px;
+      font-weight: normal;
+      font-family: "PT Sans", "PingFangSC", "Microsoft YaHei", sans-serif;
+    }
+    .about-item > header::after {
+      content: '';
+      display: block;
+      position: relative;
+      top: 24px;
+      width: 104px;
+      height: 4px;
+      margin: 0 auto;
+      background-color: #705bc1;
+    }
+    .about-item > p {
+      display: inline-block;
+      margin: 84px 0 0 0;
+      color: #626262;
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.75em;
+      letter-spacing: 2px;
+      padding: 0;
+    }
+    .timeline {
+      margin-top: 120px;
+      text-align: left;
+    }
+    .year {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      position: relative;
+      padding-bottom: 36px;
+      background: 65px repeat-y url('data:img/bmp;base64,Qk08AAAAAAAAADYAAAAoAAAAAgAAAAEAAAABABAAAAAAAAYAAAAjLgAAIy4AAAAAAAAAAAAAOWc5ZwAA')
+    }
+    .year > header {
+      display: inline-block;
+      flex: 100%;
+      height: 66px;
+      padding-left: 48px;
+      color: #ccc;
+      font-size: 16px;
+      line-height: 36px;
+      text-align: left;
+      font-family: 'STHeiTi', 'STXihei', "PingFangSC", "Microsoft YaHei", sans-serif;
+      background: 28px center no-repeat url('{{cdn}}images/timeline-triangle.svg');
+    }
+    .event {
+      display: block;
+      position: relative;
+      flex: 0 0 100%;
+      margin-left: 66px;
+      text-align: left;
+    }
+
+    .event > .event-indicator {
+      display: inline-block;
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      top: 58px;
+      left: -6px;
+      background-color: #fb9dc1;
+      border-radius: 10px;
+      opacity: .8;
+      z-index: 5;
+      transition: all 0.5s;
+    }
+
+    .event:hover > .event-indicator {
+      top: 54px;
+      left: -10px;
+      width: 20px;
+      height: 20px;
+      background-color: #a581f7;
+    }
+
+    .event > .event-indicator-glow {
+      display: inline-block;
+      position: absolute;
+      top: 48px;
+      left: -16px;
+      width: 32px;
+      height: 32px;
+      background-color: #705bc1;
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .event:hover > .event-indicator-glow {
+      opacity: .35;
+    }
+    .event::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 63px;
+      left: 0;
+      width: 28px;
+      height: 2px;
+      background-color: #ccc;
+      z-index: 0;
+    }
+
+    .event > .event-date {
+      display: inline-block;
+      position: absolute;
+      top: 64px;
+      right: 100%;
+      width: 40px;
+      padding: 0 18px;
+      color: #a0a0a0;
+      text-align: right;
+      font-size: 14px;
+      font-family: 'STHeiTi', 'STXihei', "PingFangSC", "Microsoft YaHei", sans-serif;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+
+    .event > .event-body {
+      margin: 54px 0 0 42px;
+      padding-right: 72px;
+    }
+    .event-body > header, .event-body > header > a {
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      font-family: 'STHeiTi', 'STXihei', "PingFangSC", "Microsoft YaHei", sans-serif;
+    }
+    .event-body > header img {
+      width: 12px;
+      height: 12px;
+      margin: 0 4px -1px 4px;
+    }
+    .event-body > p {
+      margin: 6px 0 8px 0;
+      color: #898989;
+      font-size: 16px;
+      letter-spacing: 2px;
+      line-height: 2;
+    }
+    .event-body .label {
+      display: inline-block;
+      padding: 4px 16px;
+      margin-top: 6px;
+      color: #535353;
+      font-size: 14px;
+      background-color: #d6d1ea;
+    }
+    .timeline > footer > img {
+      display: inline-block;
+      width: 36px;
+      margin: 12px 0 0 48px;
+    }
+    .work {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      margin-top: 60px;
+    }
+    .work > header {
+      flex: 0 0 100%;
+      margin-bottom: 60px;
+      font-size: 28px;
+      font-family: "PT Sans", "PingFangSC", "Microsoft YaHei", sans-serif;
+    }
+    .work > header::after {
+      content: '';
+      display: block;
+      position: relative;
+      top: 8px;
+      width: 72px;
+      height: 4px;
+      margin: 0 auto;
+      background-color: #5f549e;
+    }
+    .work > .project {
+      position: relative;
+      flex: 0 0 20%;
+      height: 320px;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      background-size: auto 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: background-size 0.75s;
+      cursor: pointer;
+    }
+    .work > .project > .overlay {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300px;
+      height: 300px;
+      background-color: rgba(0,0,0,.25);
+      -webkit-transform: translate(-50%, -50%) scale(.9);
+      -ms-transform: translate(-50%, -50%) scale(.9);
+      transform: translate(-50%, -50%) scale(.9);
+      border-radius: 480px;
+      transition: all 0.5s;
+      opacity: 0;
+    }
+    .work > .project.touched,
+    .work > .project:hover {
+      background-size: auto 110%;
+    }
+    .work > .project.touched > .overlay,
+    .work > .project:hover > .overlay {
+      opacity: 1;
+      -webkit-transform: translate(-50%, -50%) scale(1);
+      -ms-transform: translate(-50%, -50%) scale(1);
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .work > .project > .overlay > .details {
+      margin-top: 50%;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+    .work > .project > .overlay > .details > header {
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .work > .project > .overlay > .details > p {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .project-test-0 { background-color: #f5b383; }
+    .project-test-1 { background-color: #d6d1ea; }
+    .project-test-2 { background-color: #c391be; }
+    .project-test-3 { background-color: #add49a; }
+    .project-test-4 { background-color: #89acd8; }
+    .project-test-5 { background-color: #d1c0a7; }
+    .project-test-6 { background-color: #b28cea; }
+    .project-test-7 { background-color: #f5b383; }
+
+    .contact {
+      margin-top: 120px;
+    }
+
+    .contact > h3 {
+      margin: 40px 0 192px 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+      font-weight: normal;
+      font-family: "PT Sans", "PingFangSC", "Microsoft YaHei", sans-serif;
+    }
+
+    .contact > h3::after {
+      content: '';
+      display: block;
+      position: relative;
+      top: 48px;
+      width: 128px;
+      height: 4px;
+      margin: 0 auto;
+      background-color: #6354ad;
+    }
+
+    .icon-set > a {
+      display: inline-block;
+      position: relative;
+      margin: 0 28px;
+    }
+    .icon-set > a::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 1;
+      background-repeat: no-repeat;
+      transition: opacity 0.5s;
+    }
+    .icon-set > a:hover::before {
+      opacity: 0;
+    }
+    .icon-set > .zcool-icon::before { background-image: url('{{cdn}}images/zcool-inactive.svg') }
+    .icon-set > .douban-icon::before { background-image: url('{{cdn}}images/douban-inactive.svg') }
+    .icon-set > .instagram-icon::before { background-image: url('{{cdn}}images/instagram-inactive.svg') }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,.5);
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    #overlay.show {
+      display: block;
+    }
+    #overlay.active {
+      opacity: 1;
+    }
+    #overlay > img {
+      position: relative;
+      top: 50%;
+      max-width: 75%;
+      max-height: 87.5%;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+
+    @media (max-width: 639px) { .work > .project { flex: 0 0 100%; -ms-flex: 0 0 100%; } }
+    @media (max-width: 959px) {
+      .about-item { flex: 0 0 100%; -ms-flex: 0 0 100%; }
+      #overlay > img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+    @media (min-width: 960px) {
+      .timeline {
+        text-align: center;
+      }
+      .year {
+        background-position: center;
+      }
+      .year > header {
+        padding: 0;
+        text-align: center;
+        background-position: center;
+      }
+      .event {
+        flex: 0 0 50%;
+        margin: 0 0 0 50%;
+      }
+      .event.left {
+        margin: 0;
+        text-align: right;
+      }
+      .event.left::before {
+        left: auto;
+        right: 0;
+      }
+      .event > .event-date {
+        width: 240px;
+        padding: 0 28px;
+      }
+      .event.left > .event-date {
+        left: 100%;
+        right: auto;
+        text-align: left;
+      }
+      .event > .event-body {
+        padding-right: 0;
+      }
+      .event.left > .event-body {
+        margin: 54px 42px 0 0;
+      }
+      .event.left > .event-indicator {
+        left: auto;
+        right: -6px;
+      }
+      .event.left > .event-indicator-glow {
+        left: auto;
+        right: -16px;
+      }
+      .event.left:hover > .event-indicator {
+        left: auto;
+        right: -10px;
+        width: 20px;
+        height: 20px;
+        background-color: #a581f7;
+      }
+      .timeline > footer > img {
+        margin: 12px 0 0 0;
+      }
+    }
+    @media (min-width: 640px) and (max-width: 959px) { .work > .project { flex: 0 0 50%; -ms-flex: 0 0 50%; } }
+    @media (min-width: 960px) and (max-width: 1279px) { .work > .project { flex: 0 0 33.33%; -ms-flex: 0 0 33.33%; } }
+    @media (min-width: 1280px) and (max-width: 1599px) { .work > .project { flex: 0 0 25%; -ms-flex: 0 0 25%; } }
+</style>
+</head>
+<body>
+  <div id="drawer" class="drawer">
+    <button id="fab" class="fab">
+      <span class="fab-icon">
+        <span class="dash"></span>
+      </span>
+    </button>
+    <ul class="drawer-menu">
+      <li><a href="#jumbotron">HOME</a></li>
+      <li class="active"><a href="#about">ABOUT</a></li>
+      <li><a href="#timeline">TIMELINE</a></li>
+      <li><a href="#work">WORK</a></li>
+      <li><a href="#other">OTHER</a></li>
+      <li><a href="#contact">CONTACT</a></li>
+    </ul>
+  </div>
+  <div id="jumbotron" class="jumbotron">
+    <img src="{{cdn}}images/jumbotron-logo.svg" alt="">
+  </div>
+  <div id="about" class="about">
+    <img class="avatar" src="{{cdn}}images/avatar.svg" alt="">
+    <h3>一个有理想、有勇气的逐梦者。</h3>
+    <h6>Also known as Momo :P</h6>
+    <div class="row">
+      <div class="about-item">
+        <header>EDUCATION</header>
+        <p>
+          本科毕业于华中科技大学，<br>
+          东南大学研究生，理工科，<br>
+          建筑系景观学专业。<br>
+          从景观设计师转向UI设计，<br>
+          找寻人生不同的可能。
+        </p>
+      </div>
+      <div class="about-item">
+        <header>EXPERIENCE</header>
+        <p>
+          做过网页美工，画过微信表<br>
+          情包，画过漫画连载。支过<br>
+          教，卖过水果卖过咖啡，多<br>
+          种设计院/互联网实习经历，<br>
+          还在探寻未来归属的路上。
+        </p>
+      </div>
+      <div class="about-item">
+        <header>INTERESTS</header>
+        <p>
+          写书法，会篆刻。<br>
+          爱音乐，爱电影。<br>
+          经常读书，写写小文。<br>
+          喜欢摄影/手作/旅游。<br>
+          热爱一切美的东西。
+        </p>
+      </div>
+    </div>
+  </div>
+  <div id="timeline" class="timeline">
+    {% for year in site.data.timeline %}
+    <div class="year">
+      <header>{{year.year}}</header>
+      {% for event in year.events %}
+      <div class="event{% if event.left %} left{% endif %}">
+        <div class="event-indicator"></div>
+        <div class="event-indicator-glow"></div>
+        <div class="event-date">{{event.date}}</div>
+        <div class="event-body">
+          <header>
+          {% if event.titlelink %}
+            <a href="{{event.titlelink}}" target="_blank">{{event.title}} <img src="{{cdn}}images/external-link.svg" alt="external-link"></a>
+          {% else %}
+            {{event.title}}
+          {% endif %}
+          </header>
+          <p>{{event.content}}</p>
+          {% if event.labels %}
+          <footer>
+            {% for label in event.labels %}
+            <span class="label">{{label}}</span>
+            {% endfor %}
+          </footer>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    <footer>
+      <img src="{{cdn}}images/timeline-plane.svg" alt="">
+    </footer>
+  </div>
+  <div id="work" class="work">
+    <header>WORK</header>
+    <div class="project project-test-0"><div class="overlay"><div class="details"><header>窝教漆漆</header><p>卧室萨比</p></div></div></div>
+    <div class="project project-test-1"><div class="overlay"></div></div>
+    <div class="project project-test-2"><div class="overlay"></div></div>
+    <div class="project project-test-3"><div class="overlay"></div></div>
+    <div class="project project-test-4"><div class="overlay"></div></div>
+    <div class="project project-test-5"><div class="overlay"></div></div>
+    <div class="project project-test-6"><div class="overlay"></div></div>
+    <div class="project project-test-7"><div class="overlay"></div></div>
+  </div>
+  <div id="other" class="work">
+    <header>OTHER</header>
+    {% for img in site.data.other %}
+    <div class="project" style="background-image: url('{{cdn}}{{img.src}}');{{img.style}}" data-src="{{cdn}}{{img.src}}">
+      <div class="overlay">
+        <div class="details">
+          <header>{{img.title}}</header>
+          <p>{{img.desc}}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div id="contact" class="contact">
+    <img src="{{cdn}}images/email-logo.svg" alt="">
+    <h3>momosophia@foxmail.com</h3>
+    <div class="icon-set">
+      <a class="zcool-icon" href="http://www.zcool.com.cn/u/15622696" target="_blank"><img src="{{cdn}}images/zcool-active.svg" alt="Zcool"></a>
+      <a class="douban-icon" href="https://www.douban.com/people/wuzhennan/" target="_blank"><img src="{{cdn}}images/douban-active.svg" alt="Douban"></a>
+      <a class="instagram-icon" href="https://www.instagram.com/momo_jenna/" target="_blank"><img src="{{cdn}}images/instagram-active.svg" alt="Instagram"></a>
+    </div>
+  </div>
+  <div id="overlay">
+    <img id="overlay-img" src="" alt="">
+  </div>
+  <script src="{{cdn}}js/smooth-scroll.polyfills.min.js"></script>
+  <script>
+    var toggleDrawer = function () {
+      var drawer = document.getElementById('drawer');
+      if (drawer.className.indexOf('active') !== -1) drawer.className = drawer.className.replace('active', '').trim();
+      else drawer.className += ' active';
+    };
+    var setDrawerMenu = function () {
+      var targets = ['jumbotron', 'about', 'timeline', 'work', 'other', 'contact'];
+      var i;
+      var scrollTop = document.documentElement.scrollTop>document.body.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+      for (i = 0; i < targets.length; i++) {
+        if (scrollTop < window.innerHeight * 0.5
+         || scrollTop + window.innerHeight * 0.75 < document.getElementById(targets[i]).offsetTop)
+          break;
+      };
+      document.querySelector('.drawer-menu > li.active').className = '';
+      document.querySelectorAll('.drawer-menu > li')[i>0?i-1:i].className = 'active';
+    };
+    // Floating Action Button, used to close overlay and open/close drawer
+    document.getElementById('fab').addEventListener('click', function (e) {
+      var overlay = document.getElementById('overlay');
+      if (overlay.className.indexOf('active') !== -1) {
+        var button = document.getElementById('fab');
+        button.className = button.className.replace('exit', '').trim();
+        overlay.className = 'show';
+        setTimeout(function() {overlay.className = '';}, 500);
+        return;
+      }
+      setDrawerMenu();
+      toggleDrawer();
+    });
+    // Drawer menu
+    var drawerMenu = document.querySelectorAll('.drawer-menu > li');
+    for (var i = 0; i < drawerMenu.length; i++) {
+      drawerMenu[i].addEventListener('click', function (e) {
+        document.querySelector('.drawer-menu > li.active').className = '';
+        e.currentTarget.className = 'active';
+        toggleDrawer();
+      })
+    };
+    // Project overlay active/deactive
+    var projects = document.querySelectorAll('.project');
+    for (var i = 0; i < projects.length; i++) {
+      projects[i].addEventListener('click', function (e) {
+        if (typeof e.currentTarget.dataset.src === 'undefined')
+          return;
+        document.getElementById('overlay-img').src = e.currentTarget.dataset.src;
+        document.getElementById('overlay').className = 'show';
+        document.getElementById('fab').className += ' exit';
+        setTimeout(function () { document.getElementById('overlay').className += ' active'; }, 10);
+      });
+    }
+    // Scrollspy
+    var lastScroll = 0;
+    window.addEventListener('scroll', function (e) {
+      var now = new Date().getTime();
+      // Event throttling
+      if (now - lastScroll > 100) {
+        lastScroll = now;
+        if (document.getElementById('drawer').className.indexOf('active') === -1)
+          return;
+        setDrawerMenu();
+      }
+    });
+    // SmoothScroll
+    var scroll = new SmoothScroll('a[href*="#"]', {speed: 750});
+  </script>
+</body>
+</html>

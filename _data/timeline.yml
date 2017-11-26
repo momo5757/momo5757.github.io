@@ -1,0 +1,106 @@
+- year: 1991
+  events:
+    - title: Hello, World!
+      content: 出生在山东的一个小镇。爱画画，从小练书法
+      date: Aug. 1991
+- year: 2010
+  events:
+    - title: Bachelor of Landscape Architecture
+      content: 华中科技大学，建筑与城市规划学院
+      date: Sep. 2010
+      left: true
+    - title: Start seeking
+      content: 华中科技大学心理文化节原创漫画大赛三等奖
+      date: Nov. 2010
+- year: 2011
+  events:
+    - title: The First Design Award
+      content: 腾讯soso校园创意logo设计大赛校园胜出奖
+      date: Oct. 2011
+      left: true
+    - title: Acdamic Awards
+      content: 国家奖学金，校三好学生
+      date: Nov. 2010
+    - title: Volunteer work
+      content: 武汉光谷八小支教活动，课外书法老师
+      date: Jan. - Dec.
+      left: true
+- year: 2012
+  events:
+    - title: Be a leader
+      content: 任华中篆刻社社长
+      date: Jan. 2012
+      left: true
+      labels:
+        - 篆刻
+        - 活动策划
+        - 社团组织
+    - title: focus.hustonline.net
+      titlelink: http://focus.hustonline.net
+      content: 华中大在线视野网，设计师
+      date: 2012 - 2013
+      labels:
+        - 网页设计
+        - 视觉设计
+        - UI/VI
+    - title: Design Awards
+      content: |
+        校“天一杯”手绘建筑画大赛优秀奖<br>
+        校园文化节“感恩母校”设计大赛文化衫设计一等奖<br>
+        光电学院院徽设计大赛二等奖<br>
+        校发展指导中心“心灵之约”logo征集活动三等奖<br>
+        校“天一杯”手绘建筑画大赛优秀奖<br>
+      date: 2012 - 2014
+      left: true
+- year: 2014
+  events:
+    - title: Comic
+      content: 有妖气平台连载个人漫画《少年故事》
+      date: Nov. 2014 - May. 2015
+      left: true
+    - title: Part-time job
+      content: 武汉泛美精英教育网页/周边设计
+      date: Jun. 2014
+      labels:
+        - 网页设计
+        - 视觉设计
+        - UI/VI
+- year: 2015
+  events:
+    - title: Graduation
+      content: 优秀毕业生/优秀毕业设计
+      date: Jun. 2015
+      left: true
+    - title: Master of Landscape Architecture
+      content: 保送至东南大学，建筑学院风景园林硕士
+      date: Sep. 2015
+- year: 2017
+  events:
+    - title: Part-time job
+      content: 北京言乎言及文化公司，在线艺术课老师
+      date: Jan. 2017
+      left: true
+      labels:
+        - 艺术
+        - 教育
+        - 活动策划
+    - title: Weixin Stickers
+      content: 绘制表情包《周小叽的日常》
+      date: Jan. - Mar.
+    - title: www.codepku.com
+      titlelink: http://www.codepku.com
+      content: 深圳编玩边学教育科技公司，平面设计
+      date: Jul. - Oct.
+      left: true
+      labels:
+        - 视觉设计
+        - 教育
+        - 创意设计
+    - title: capital.lenovo.com
+      titlelink: http://capital.lenovo.com
+      content: 联想创投智能实验室，UI/UX设计
+      date: Nov. - Now
+      labels:
+        - 网页设计
+        - 视觉设计
+        - UI/UX
