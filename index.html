@@ -747,18 +747,16 @@ title: wzhn.me
       toggleDrawer();
     });
     // Drawer menu
-    var drawerMenu = document.querySelectorAll('.drawer-menu > li');
-    for (var i = 0; i < drawerMenu.length; i++) {
-      drawerMenu[i].addEventListener('click', function (e) {
+    [].forEach.call(document.querySelectorAll('.drawer-menu > li'), function (el) {
+      el.addEventListener('click', function (e) {
         document.querySelector('.drawer-menu > li.active').className = '';
         e.currentTarget.className = 'active';
         toggleDrawer();
-      })
-    };
+      });
+    });
     // Project overlay active/deactive
-    var projects = document.querySelectorAll('.project');
-    for (var i = 0; i < projects.length; i++) {
-      projects[i].addEventListener('click', function (e) {
+    [].forEach.call(document.querySelectorAll('.project'), function (el) {
+      el.addEventListener('click', function (e) {
         if (typeof e.currentTarget.dataset.src === 'undefined')
           return;
         document.getElementById('overlay-img').src = e.currentTarget.dataset.src;
@@ -766,7 +764,7 @@ title: wzhn.me
         document.getElementById('fab').className += ' exit';
         setTimeout(function () { document.getElementById('overlay').className += ' active'; }, 10);
       });
-    }
+    });
     // Scrollspy
     var lastScroll = 0;
     window.addEventListener('scroll', function (e) {
