@@ -381,10 +381,10 @@ title: wzhn.me
       align-items: center;
       text-align: center;
       overflow: hidden;
-      background-size: auto 100%;
+      background-size: cover;
       background-repeat: no-repeat;
-      background-position: center;
-      transition: background-size 0.75s;
+      background-position: 50% 50%;
+      transition: background-position 0.75s;
       cursor: pointer;
     }
     .work > .project > .overlay {
@@ -394,7 +394,7 @@ title: wzhn.me
       left: 50%;
       width: 300px;
       height: 300px;
-      background-color: rgba(0,0,0,.25);
+      background-color: rgba(0,0,0,.4);
       -webkit-transform: translate(-50%, -50%) scale(.9);
       -ms-transform: translate(-50%, -50%) scale(.9);
       transform: translate(-50%, -50%) scale(.9);
@@ -402,9 +402,13 @@ title: wzhn.me
       transition: all 0.5s;
       opacity: 0;
     }
-    .work > .project.touched,
-    .work > .project:hover {
-      background-size: auto 110%;
+    .work > .project.touched:nth-child(2n),
+    .work > .project:hover:nth-child(2n) {
+      background-position: 40% 40%;
+    }
+    .work > .project.touched:nth-child(2n+1),
+    .work > .project:hover:nth-child(2n+1) {
+      background-position: 60% 60%;
     }
     .work > .project.touched > .overlay,
     .work > .project:hover > .overlay {
@@ -505,7 +509,9 @@ title: wzhn.me
       position: relative;
       top: 50%;
       max-width: 75%;
+      max-width: 75vw;
       max-height: 87.5%;
+      max-height: 87.5vh;
       -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
       transform: translateY(-50%);
