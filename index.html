@@ -9,9 +9,9 @@ title: wzhn.me
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wu ZHenNan: ME</title>
-<link rel="apple-touch-icon-precomposed" href="{{cdn}}favicon-152.png">
-<link rel="shortcut icon" sizes="196x196" href="{{cdn}}favicon-196.png">
-<link rel='mask-icon' href='{{cdn}}favicon.svg' color='#5b3340'>
+<link rel="apple-touch-icon-precomposed" href="{{url}}{{baseurl}}favicon-152.png">
+<link rel="shortcut icon" sizes="196x196" href="{{url}}{{baseurl}}favicon-196.png">
+<link rel='mask-icon' href='{{url}}{{baseurl}}favicon.svg' color='#5b3340'>
 <style>
     html, body {
       width: 100%;
@@ -36,7 +36,7 @@ title: wzhn.me
       height: 100vh;
       background-size: cover;
       background-position: center;
-      background-image: url('{{cdn}}images/jumbotron.jpg');
+      background-image: url('{{url}}{{baseurl}}images/jumbotron.jpg');
     }
     .jumbotron > img {
       display: inline-block;
@@ -240,7 +240,7 @@ title: wzhn.me
       line-height: 36px;
       text-align: left;
       font-family: 'STHeiTi', 'STXihei', "PingFangSC", "Microsoft YaHei", sans-serif;
-      background: 28px center no-repeat url('{{cdn}}images/timeline-triangle.svg');
+      background: 28px center no-repeat url('{{url}}{{baseurl}}images/timeline-triangle.svg');
     }
     .event {
       display: block;
@@ -485,9 +485,9 @@ title: wzhn.me
     .icon-set > a:hover::before {
       opacity: 0;
     }
-    .icon-set > .zcool-icon::before { background-image: url('{{cdn}}images/zcool-inactive.svg') }
-    .icon-set > .douban-icon::before { background-image: url('{{cdn}}images/douban-inactive.svg') }
-    .icon-set > .instagram-icon::before { background-image: url('{{cdn}}images/instagram-inactive.svg') }
+    .icon-set > .zcool-icon::before { background-image: url('{{url}}{{baseurl}}images/zcool-inactive.svg') }
+    .icon-set > .douban-icon::before { background-image: url('{{url}}{{baseurl}}images/douban-inactive.svg') }
+    .icon-set > .instagram-icon::before { background-image: url('{{url}}{{baseurl}}images/instagram-inactive.svg') }
     #overlay {
       display: none;
       position: fixed;
@@ -605,10 +605,10 @@ title: wzhn.me
     </ul>
   </div>
   <div id="jumbotron" class="jumbotron">
-    <img src="{{cdn}}images/jumbotron-logo.svg" alt="">
+    <img src="{{url}}{{baseurl}}images/jumbotron-logo.svg" alt="">
   </div>
   <div id="about" class="about">
-    <img class="avatar" src="{{cdn}}images/avatar.svg" alt="">
+    <img class="avatar" src="{{url}}{{baseurl}}images/avatar.svg" alt="">
     <h3>一个有理想、有勇气的逐梦者。</h3>
     <h6>Also known as Momo :P</h6>
     <div class="row">
@@ -656,7 +656,7 @@ title: wzhn.me
         <div class="event-body">
           <header>
           {% if event.titlelink %}
-            <a href="{{event.titlelink}}" target="_blank">{{event.title}} <img src="{{cdn}}images/external-link.svg" alt="external-link"></a>
+            <a href="{{event.titlelink}}" target="_blank">{{event.title}} <img src="{{url}}{{baseurl}}images/external-link.svg" alt="external-link"></a>
           {% else %}
             {{event.title}}
           {% endif %}
@@ -675,7 +675,7 @@ title: wzhn.me
     </div>
     {% endfor %}
     <footer>
-      <img src="{{cdn}}images/timeline-plane.svg" alt="">
+      <img src="{{url}}{{baseurl}}images/timeline-plane.svg" alt="">
     </footer>
   </div>
   <div id="work" class="work">
@@ -692,7 +692,7 @@ title: wzhn.me
   <div id="other" class="work">
     <header>OTHER</header>
     {% for img in site.data.other %}
-    <div class="project" style="background-image: url('{{cdn}}{{img.src}}');{{img.style}}" data-src="{{cdn}}{{img.src}}">
+    <div class="project" style="background-image: url('{{url}}{{baseurl}}{{img.src}}');{{img.style}}" data-src="{{url}}{{baseurl}}{{img.src}}">
       <div class="overlay">
         <div class="details">
           <header>{{img.title}}</header>
@@ -703,18 +703,18 @@ title: wzhn.me
     {% endfor %}
   </div>
   <div id="contact" class="contact">
-    <img src="{{cdn}}images/email-logo.svg" alt="">
+    <img src="{{url}}{{baseurl}}images/email-logo.svg" alt="">
     <h3>momosophia@foxmail.com</h3>
     <div class="icon-set">
-      <a class="zcool-icon" href="http://www.zcool.com.cn/u/15622696" target="_blank"><img src="{{cdn}}images/zcool-active.svg" alt="Zcool"></a>
-      <a class="douban-icon" href="https://www.douban.com/people/wuzhennan/" target="_blank"><img src="{{cdn}}images/douban-active.svg" alt="Douban"></a>
-      <a class="instagram-icon" href="https://www.instagram.com/momo_jenna/" target="_blank"><img src="{{cdn}}images/instagram-active.svg" alt="Instagram"></a>
+      <a class="zcool-icon" href="http://www.zcool.com.cn/u/15622696" target="_blank"><img src="{{url}}{{baseurl}}images/zcool-active.svg" alt="Zcool"></a>
+      <a class="douban-icon" href="https://www.douban.com/people/wuzhennan/" target="_blank"><img src="{{url}}{{baseurl}}images/douban-active.svg" alt="Douban"></a>
+      <a class="instagram-icon" href="https://www.instagram.com/momo_jenna/" target="_blank"><img src="{{url}}{{baseurl}}images/instagram-active.svg" alt="Instagram"></a>
     </div>
   </div>
   <div id="overlay">
     <img id="overlay-img" src="" alt="">
   </div>
-  <script src="{{cdn}}js/smooth-scroll.polyfills.min.js"></script>
+  <script src="{{url}}{{baseurl}}js/smooth-scroll.polyfills.min.js"></script>
   <script>
     var toggleDrawer = function () {
       var drawer = document.getElementById('drawer');
