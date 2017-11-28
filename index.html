@@ -19,7 +19,6 @@ title: wzhn.me
     }
     body {
       margin: 0;
-      padding-bottom: 240px;
       text-align: center;
       font-family: "PingFangSC", "Microsoft YaHei", sans-serif;
     }
@@ -516,6 +515,26 @@ title: wzhn.me
       -ms-transform: translateY(-50%);
       transform: translateY(-50%);
     }
+    #copyright {
+      margin-top: 192px;
+      margin-bottom: 16px;
+      color: #ccc;
+      font-size: 12px;
+    }
+    .copyright-text {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+    }
+    .copyright-text a {
+      color: #aaa;
+    }
+    .copyright-text > span {
+      display: inline-block;
+      flex: 0 0 100%;
+      margin-top: 6px;
+    }
 
     @media (max-width: 639px) { .work > .project { flex: 0 0 100%; -ms-flex: 0 0 100%; } }
     @media (max-width: 959px) {
@@ -581,6 +600,13 @@ title: wzhn.me
       }
       .timeline > footer > img {
         margin: 12px 0 0 0;
+      }
+      #copyright > img {
+        position: relative;
+        top: 24px;
+      }
+      .copyright-text > span {
+        flex: 0 0 50%;
       }
     }
     @media (min-width: 640px) and (max-width: 959px) { .work > .project { flex: 0 0 50%; -ms-flex: 0 0 50%; } }
@@ -724,6 +750,13 @@ title: wzhn.me
       <a class="instagram-icon" href="https://www.instagram.com/momo_jenna/" target="_blank"><img src="{{site.url}}{{site.baseurl}}/images/instagram-active.svg" alt="Instagram"></a>
     </div>
   </div>
+  <div id="copyright">
+    <img src="{{site.url}}{{site.baseurl}}/favicon.svg" alt="">
+    <div class="copyright-text">
+      <span>© 2017 Wu Zhennan. All rights reserved.</span>
+      <span>Code licensed <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank">GPLV3</a>, design <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>.</span>
+    </div>
+  </div>
   <div id="overlay">
     <img id="overlay-img" src="" alt="">
   </div>
@@ -794,4 +827,5 @@ title: wzhn.me
     var scroll = new SmoothScroll('a[href*="#"]', {speed: 750});
   </script>
 </body>
+<!-- Build with <3 by akasfei. Wherever yours. -->
 </html>
