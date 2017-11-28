@@ -244,9 +244,14 @@ title: wzhn.me
     .event {
       display: block;
       position: relative;
+      top: 0;
       flex: 0 0 100%;
       margin-left: 66px;
       text-align: left;
+      transition: top 0.75s;
+    }
+    .event.standby {
+      top: 100px;
     }
 
     .event > .event-indicator {
@@ -675,7 +680,7 @@ title: wzhn.me
     <div class="year">
       <header>{{year.year}}</header>
       {% for event in year.events %}
-      <div class="event{% if event.left %} left{% endif %}">
+      <div class="event standby{% if event.left %} left{% endif %}">
         <div class="event-indicator"></div>
         <div class="event-indicator-glow"></div>
         <div class="event-date">{{event.date}}</div>
@@ -762,6 +767,16 @@ title: wzhn.me
   </div>
   <script src="{{site.url}}{{site.baseurl}}/smooth-scroll/dist/js/smooth-scroll.polyfills.min.js"></script>
   <script>
+    var inViewport = function (el) {
+      var rect = el.getBoundingClientRect();
+      return (
+        rect.top >= 0 &&
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight)
+      ) || (
+        rect.bottom >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+      );
+    };
     var toggleDrawer = function () {
       var drawer = document.getElementById('drawer');
       if (drawer.className.indexOf('active') !== -1) drawer.className = drawer.className.replace('active', '').trim();
@@ -818,6 +833,10 @@ title: wzhn.me
       // Event throttling
       if (now - lastScroll > 100) {
         lastScroll = now;
+        [].forEach.call(document.querySelectorAll('.event.standby'), function (el) {
+          if (inViewport(el))
+            el.className = el.className.replace('standby', '').trim();
+        });
         if (document.getElementById('drawer').className.indexOf('active') === -1)
           return;
         setDrawerMenu();
