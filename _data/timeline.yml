@@ -36,7 +36,7 @@
         - 活动策划
         - 社团组织
     - title: focus.hustonline.net
-      titlelink: http://focus.hustonline.net
+      titlelink: "http://focus.hustonline.net"
       content: 华中大在线视野网，设计师
       date: 2012 - 2013
       labels:
@@ -55,6 +55,7 @@
 - year: 2014
   events:
     - title: Comic
+      titlelink: "http://www.u17.com/comic/90289.html"
       content: 有妖气平台连载个人漫画《少年故事》
       date: Nov. 2014 - May. 2015
       left: true
@@ -85,10 +86,11 @@
         - 教育
         - 活动策划
     - title: Weixin Stickers
+      titlelink: "https://sticker.weixin.qq.com/cgi-bin/mmemoticon-bin/emoticonview?oper=single&t=shop/detail&productid=aL2PCfwK/89qO7sF6/+I+UDhfwEjhec2ZNvdnLLJRd/MHc6IDYNZBd8S5+xzpgL3FWKTXG6X55V1sNmtOqw9d50iAfr4r0eqxsq8Zk+5w+QE="
       content: 绘制表情包《周小叽的日常》
       date: Jan. - Mar.
     - title: www.codepku.com
-      titlelink: http://www.codepku.com
+      titlelink: "http://www.codepku.com"
       content: 深圳编玩边学教育科技公司，平面设计
       date: Jul. - Oct.
       left: true
@@ -97,7 +99,7 @@
         - 教育
         - 创意设计
     - title: capital.lenovo.com
-      titlelink: http://capital.lenovo.com
+      titlelink: "http://capital.lenovo.com"
       content: 联想创投智能实验室，UI/UX设计
       date: Nov. - Now
       labels:
