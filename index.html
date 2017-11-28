@@ -680,14 +680,27 @@ title: wzhn.me
   </div>
   <div id="work" class="work">
     <header>WORK</header>
-    <div class="project project-test-0"><div class="overlay"><div class="details"><header>窝教漆漆</header><p>卧室萨比</p></div></div></div>
-    <div class="project project-test-1"><div class="overlay"></div></div>
-    <div class="project project-test-2"><div class="overlay"></div></div>
-    <div class="project project-test-3"><div class="overlay"></div></div>
-    <div class="project project-test-4"><div class="overlay"></div></div>
-    <div class="project project-test-5"><div class="overlay"></div></div>
-    <div class="project project-test-6"><div class="overlay"></div></div>
-    <div class="project project-test-7"><div class="overlay"></div></div>
+    {% for work in site.data.work %}
+    {% if work.link %}
+    <a class="project" href="{{work.link}}" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" target="_blank">
+      <div class="overlay">
+        <div class="details">
+          <header>{{work.title}} <img src="{{site.url}}{{site.baseurl}}/images/external-link.svg" alt="external-link"></header>
+          <p>{{work.desc}}</p>
+        </div>
+      </div>
+    </a>
+    {% else %}
+    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}">
+      <div class="overlay">
+        <div class="details">
+          <header>{{work.title}}</header>
+          <p>{{work.desc}}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
   </div>
   <div id="other" class="work">
     <header>OTHER</header>
