@@ -65,6 +65,7 @@ title: wzhn.me
       position: absolute;
       top: 50%;
       width: 100%;
+      margin: 0;
       padding: 0;
       list-style: none;
       -webkit-transform: translateY(-50%);
@@ -545,7 +546,17 @@ title: wzhn.me
       flex: 0 0 100%;
       margin-top: 6px;
     }
-
+    @media (max-height: 479px) {
+      .fab {
+        transition: right 0.5s;
+      }
+      .drawer.active > .fab {
+        right: 272px;
+      }
+      .drawer-menu > li {
+        margin: 6px 0;
+      }
+    }
     @media (max-width: 639px) { .work > .project { flex: 0 0 100%; -ms-flex: 0 0 100%; } }
     @media (max-width: 959px) {
       .about-item { flex: 0 0 100%; -ms-flex: 0 0 100%; }
