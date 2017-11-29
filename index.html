@@ -631,10 +631,11 @@ title: wzhn.me
       </span>
     </button>
     <ul class="drawer-menu">
-      <li><a href="#jumbotron">HOME</a></li>
-      <li class="active"><a href="#about">ABOUT</a></li>
+      <li class="active"><a href="#jumbotron">HOME</a></li>
+      <li><a href="#about">ABOUT</a></li>
       <li><a href="#timeline">TIMELINE</a></li>
       <li><a href="#work">WORK</a></li>
+      <li><a href="#photography">PHOTOGRAPHY</a></li>
       <li><a href="#other">OTHER</a></li>
       <li><a href="#contact">CONTACT</a></li>
     </ul>
@@ -740,6 +741,22 @@ title: wzhn.me
     {% endif %}
     {% endfor %}
   </div>
+  <div id="photography" class="work">
+    <header>PHOTOGRAPHY</header>
+    {% for img in site.data.photography %}
+    {% if img.doc %}
+    <div class="doc">{{img.doc | markdownify}}</div>
+    {% endif %}
+    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
+      <div class="overlay">
+        <div class="details">
+          <header>{{img.title}}</header>
+          <p>{{img.desc}}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
   <div id="other" class="work">
     <header>OTHER</header>
     {% for img in site.data.other %}
@@ -778,6 +795,10 @@ title: wzhn.me
   </div>
   <script src="{{site.url}}{{site.baseurl}}/smooth-scroll/dist/js/smooth-scroll.polyfills.min.js"></script>
   <script>
+    var sections = [];
+    [].forEach.call(document.querySelectorAll('.drawer-menu > li > a'), function (el) {
+      sections.push(el.getAttribute('href').substr(1));
+    });
     var inViewport = function (el) {
       var rect = el.getBoundingClientRect();
       return (
@@ -794,12 +815,11 @@ title: wzhn.me
       else drawer.className += ' active';
     };
     var setDrawerMenu = function () {
-      var targets = ['jumbotron', 'about', 'timeline', 'work', 'other', 'contact'];
       var i;
       var scrollTop = document.documentElement.scrollTop>document.body.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
-      for (i = 0; i < targets.length; i++) {
+      for (i = 0; i < sections.length; i++) {
         if (scrollTop < window.innerHeight * 0.5
-         || scrollTop + window.innerHeight * 0.75 < document.getElementById(targets[i]).offsetTop)
+         || scrollTop + window.innerHeight * 0.75 < document.getElementById(sections[i]).offsetTop)
           break;
       };
       document.querySelector('.drawer-menu > li.active').className = '';
