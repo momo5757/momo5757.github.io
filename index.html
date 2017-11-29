@@ -391,6 +391,9 @@ title: wzhn.me
       transition: background-position 0.75s;
       cursor: pointer;
     }
+    .work > .project > .doc {
+      display: none;
+    }
     .work > .project > .overlay {
       display: block;
       position: absolute;
@@ -499,26 +502,28 @@ title: wzhn.me
       left: 0;
       right: 0;
       bottom: 0;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -ms-flex-align: center;
+      align-items: center;
       background-color: rgba(0,0,0,.5);
       opacity: 0;
       transition: opacity 0.5s;
     }
     #overlay.show {
-      display: block;
+      display: -ms-flexbox;
+      display: flex;
     }
     #overlay.active {
       opacity: 1;
     }
-    #overlay > img {
-      position: relative;
-      top: 50%;
-      max-width: 75%;
-      max-width: 75vw;
-      max-height: 87.5%;
-      max-height: 87.5vh;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
+    #overlay-container {
+      padding: 10px 80px;
+      max-height: 100%;
+      overflow-y: auto;
+    }
+    #overlay-container > * {
+      margin: 0;
     }
     #copyright {
       margin-top: 192px;
@@ -544,9 +549,8 @@ title: wzhn.me
     @media (max-width: 639px) { .work > .project { flex: 0 0 100%; -ms-flex: 0 0 100%; } }
     @media (max-width: 959px) {
       .about-item { flex: 0 0 100%; -ms-flex: 0 0 100%; }
-      #overlay > img {
-        max-width: 100%;
-        max-height: 100%;
+      #overlay {
+        padding: 0;
       }
     }
     @media (min-width: 960px) {
@@ -722,7 +726,10 @@ title: wzhn.me
       </div>
     </a>
     {% else %}
-    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}">
+    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}"{% if work.doc %} data-doc="true"{% endif %}>
+      {% if work.doc %}
+      <div class="doc">{{work.doc | markdownify}}</div>
+      {% endif %}
       <div class="overlay">
         <div class="details">
           <header>{{work.title}}</header>
@@ -736,7 +743,10 @@ title: wzhn.me
   <div id="other" class="work">
     <header>OTHER</header>
     {% for img in site.data.other %}
-    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}">
+    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
+      {% if img.doc %}
+      <div class="doc">{{img.doc | markdownify}}</div>
+      {% endif %}
       <div class="overlay">
         <div class="details">
           <header>{{img.title}}</header>
@@ -763,7 +773,8 @@ title: wzhn.me
     </div>
   </div>
   <div id="overlay">
-    <img id="overlay-img" src="" alt="">
+    <div id="overlay-container">
+    </div>
   </div>
   <script src="{{site.url}}{{site.baseurl}}/smooth-scroll/dist/js/smooth-scroll.polyfills.min.js"></script>
   <script>
@@ -818,9 +829,11 @@ title: wzhn.me
     // Project overlay active/deactive
     [].forEach.call(document.querySelectorAll('.project'), function (el) {
       el.addEventListener('click', function (e) {
-        if (typeof e.currentTarget.dataset.src === 'undefined')
-          return;
-        document.getElementById('overlay-img').src = e.currentTarget.dataset.src;
+        if (typeof e.currentTarget.dataset.doc !== 'undefined')
+          document.getElementById('overlay-container').innerHTML = e.currentTarget.querySelector('.doc').innerHTML;
+        else if (typeof e.currentTarget.dataset.src !== 'undefined')
+          document.getElementById('overlay-container').innerHTML = '<img src="' + e.currentTarget.dataset.src + '">';
+        else return;
         document.getElementById('overlay').className = 'show';
         document.getElementById('fab').className += ' exit';
         setTimeout(function () { document.getElementById('overlay').className += ' active'; }, 10);
