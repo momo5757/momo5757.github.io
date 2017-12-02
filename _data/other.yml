@@ -1,6 +1,3 @@
-- src: images/other/little-planet.jpg
-  title: 小小星球
-  desc: 临摹Dribble大神
 - src: images/other/logo-blur2.jpg
   title: Shapes
   desc: AI-Logo
@@ -27,6 +24,9 @@
   desc: AI-矢量插画
   doc: |
     ![](/images/other/sketch-1.jpg)
+- src: images/other/little-planet.jpg
+  title: 小小星球
+  desc: 临摹Dribble大神
 - src: images/other/whale.jpg
   title: Oceans
   desc: AI-矢量插画
@@ -39,11 +39,8 @@
     ![](/images/other/yacht-center-2.jpg)
     ![](/images/other/yacht-center-3.jpg)
     ![](/images/other/yacht-center-4.jpg)
-- src: images/other/stamp-02.jpg
+- src: images/other/stamp.jpg
   title: 篆刻作品
   desc: 国学-篆刻
   doc: |
     ![](/images/other/stamp-01.jpg)
-    ![](/images/other/stamp-02.jpg)
-    ![](/images/other/stamp-03.jpg)
-    ![](/images/other/stamp-04.jpg)
