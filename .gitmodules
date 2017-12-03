@@ -1,3 +1,6 @@
 [submodule "smooth-scroll"]
 	path = smooth-scroll
 	url = https://github.com/cferdinandi/smooth-scroll
+[submodule "sw-toolbox"]
+	path = sw-toolbox
+	url = https://github.com/GoogleChromeLabs/sw-toolbox
