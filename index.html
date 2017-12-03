@@ -774,7 +774,7 @@ title: wzhn.me
     {% for img in site.data.other %}
     <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
       {% if img.doc %}
-      <div class="doc">{{img.doc | markdownify}}</div>
+      <script class="doc" type="text/html">{{img.doc | markdownify}}</script>
       {% endif %}
       <div class="overlay">
         <div class="details">
