@@ -1,0 +1,20 @@
+{
+  "short_name": "wzhn.me",
+  "name": "Wu ZHenNan: ME",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f9cdcd",
+  "icons": [
+    {
+      "src": "favicon-152.png",
+      "type": "image/png",
+      "sizes": "152x152"
+    },
+    {
+      "src": "favicon-196.png",
+      "type": "image/png",
+      "sizes": "196x196"
+    }
+  ],
+  "start_url": "index.html"
+}
