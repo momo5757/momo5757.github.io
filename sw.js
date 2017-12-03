@@ -40,7 +40,7 @@ const fileManifest = [
   },
   {
     "url": "index.html",
-    "revision": "9d594886f5a66b8392b86bb0d8399854"
+    "revision": "67ecfed6ed06e0a9af3b3a24b003e1d2"
   },
   {
     "url": "workbox-sw.prod.v2.1.2.js",
@@ -232,7 +232,7 @@ const fileManifest = [
   },
   {
     "url": "images/other/logo-museum-1.jpg",
-    "revision": "fb13fd849ed7df2f669195927e0dc422"
+    "revision": "eaa8871fda08d49c2b9a3c91d92f1a9c"
   },
   {
     "url": "images/other/logo-museum-2.jpg",
@@ -244,7 +244,7 @@ const fileManifest = [
   },
   {
     "url": "images/other/logo-photography-1.jpg",
-    "revision": "68d01c573fe2bc75e1e0e8dc619da5c4"
+    "revision": "d50acefb9cb1918a366af3bb7e4bc80a"
   },
   {
     "url": "images/other/logo-photography.jpg",
@@ -256,7 +256,7 @@ const fileManifest = [
   },
   {
     "url": "images/other/sketch-1.jpg",
-    "revision": "53c69cf058f3ea1d095fd40aaeb6520b"
+    "revision": "4325c16ecc5463f1863727f0d6c3639d"
   },
   {
     "url": "images/other/sketch.jpg",
@@ -280,15 +280,15 @@ const fileManifest = [
   },
   {
     "url": "images/other/yacht-center-2.jpg",
-    "revision": "b0a19e749659689dd912044f417d3071"
+    "revision": "9e88fac830da146a370ad26c69d3bb41"
   },
   {
     "url": "images/other/yacht-center-3.jpg",
-    "revision": "99236cc3868c31012c7867fdaf551dee"
+    "revision": "22a4f7d93badecc83c80c4b344329184"
   },
   {
     "url": "images/other/yacht-center-4.jpg",
-    "revision": "94ceb79b9f8383ae0732072a3de5b2c5"
+    "revision": "4f5a70bb11eb812d7b77f16bde3db1d8"
   },
   {
     "url": "images/other/yacht-center.jpg",
@@ -307,12 +307,12 @@ const fileManifest = [
     "revision": "4e6c13a3bcd70edd7eec686aa8c43809"
   },
   {
-    "url": "images/work/banner-design.png",
-    "revision": "1da020345b568e4c1b6743ff8b29bac1"
+    "url": "images/work/banner-design.jpg",
+    "revision": "dd9019d8be5403041e0396b77e364c4f"
   },
   {
-    "url": "images/work/chat-app.png",
-    "revision": "c95e4736ed9fbfff920f06c5d54ab528"
+    "url": "images/work/chat-app.jpg",
+    "revision": "0b887a2e77f5f966eebf7b761dea70cf"
   },
   {
     "url": "images/work/dashboard.jpg",
