@@ -40,7 +40,7 @@ const fileManifest = [
   },
   {
     "url": "index.html",
-    "revision": "67ecfed6ed06e0a9af3b3a24b003e1d2"
+    "revision": "797d645e4a5f2961cd0063a837d12648"
   },
   {
     "url": "workbox-sw.prod.v2.1.2.js",
