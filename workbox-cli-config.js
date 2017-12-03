@@ -5,7 +5,7 @@ module.exports = {
     "images/**/*.{png,svg,ico,jpg}",
     "smooth-scroll/dist/js/smooth-scroll.polyfills.min.js"
   ],
-  "swDest": "./sw.js",
+  "swDest": "sw/sw.js",
   "globIgnores": [
     "workbox-cli-config.js",
     "gulpfile.js",
