@@ -730,7 +730,7 @@ title: wzhn.me
     <header>WORK</header>
     {% for work in site.data.work %}
     {% if work.link %}
-    <a class="project" href="{{work.link}}" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" target="_blank">
+    <a class="project lazy" href="{{work.link}}" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}" target="_blank">
       <div class="overlay">
         <div class="details">
           <header>{{work.title}} <img src="{{site.url}}{{site.baseurl}}/images/external-link.svg" alt="external-link"></header>
@@ -739,7 +739,7 @@ title: wzhn.me
       </div>
     </a>
     {% else %}
-    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}"{% if work.doc %} data-doc="true"{% endif %}>
+    <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}"{% if work.doc %} data-doc="true"{% endif %}>
       {% if work.doc %}
       <div class="doc">{{work.doc | markdownify}}</div>
       {% endif %}
@@ -759,7 +759,7 @@ title: wzhn.me
     {% if img.doc %}
     <div class="doc">{{img.doc | markdownify}}</div>
     {% endif %}
-    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
+    <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
       <div class="overlay">
         <div class="details">
           <header>{{img.title}}</header>
@@ -772,7 +772,7 @@ title: wzhn.me
   <div id="other" class="work">
     <header>OTHER</header>
     {% for img in site.data.other %}
-    <div class="project" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
+    <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
       {% if img.doc %}
       <script class="doc" type="text/html">{{img.doc | markdownify}}</script>
       {% endif %}
@@ -882,6 +882,13 @@ title: wzhn.me
           if (inViewport(el))
             el.className = el.className.replace('standby', '').trim();
         });
+        // Lazy loading project images
+        [].forEach.call(document.querySelectorAll('.project.lazy'), function (el) {
+          if (inViewport(el)) {
+            el.style.backgroundImage = 'url(\'' + el.dataset.src + '\')';
+            el.className = el.className.replace('lazy', '').trim();
+          }
+        });
         if (document.getElementById('drawer').className.indexOf('active') === -1)
           return;
         setDrawerMenu();
@@ -891,7 +898,7 @@ title: wzhn.me
     var scroll = new SmoothScroll('a[href*="#"]', {speed: 750});
     // Service Worker
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
+      window.addEventListener('load', function () {
         navigator.serviceWorker.register('{{site.url}}{{site.baseurl}}/sw.js').then(function (registration) {
           console.log('SW registered: ', registration);
         }).catch(function (registrationError) {
