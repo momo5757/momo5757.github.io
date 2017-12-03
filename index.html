@@ -730,7 +730,7 @@ title: wzhn.me
     <header>WORK</header>
     {% for work in site.data.work %}
     {% if work.link %}
-    <a class="project lazy" href="{{work.link}}" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}" target="_blank">
+    <a class="project lazy" href="{{work.link}}" style="{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}" target="_blank">
       <div class="overlay">
         <div class="details">
           <header>{{work.title}} <img src="{{site.url}}{{site.baseurl}}/images/external-link.svg" alt="external-link"></header>
@@ -739,7 +739,7 @@ title: wzhn.me
       </div>
     </a>
     {% else %}
-    <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}"{% if work.doc %} data-doc="true"{% endif %}>
+    <div class="project lazy" style="{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}"{% if work.doc %} data-doc="true"{% endif %}>
       {% if work.doc %}
       <script class="doc" type="text/html">{{img.doc | markdownify}}</script>
       {% endif %}
@@ -759,7 +759,7 @@ title: wzhn.me
     {% if img.doc %}
     <script class="doc" type="text/html">{{img.doc | markdownify}}</script>
     {% endif %}
-    <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
+    <div class="project lazy" style="{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
       <div class="overlay">
         <div class="details">
           <header>{{img.title}}</header>
@@ -772,7 +772,7 @@ title: wzhn.me
   <div id="other" class="work">
     <header>OTHER</header>
     {% for img in site.data.other %}
-    <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
+    <div class="project lazy" style="{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
       {% if img.doc %}
       <script class="doc" type="text/html">{{img.doc | markdownify}}</script>
       {% endif %}
