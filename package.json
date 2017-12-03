@@ -1,0 +1,23 @@
+{
+  "name": "wzhn.me",
+  "version": "1.0.0",
+  "description": "Wu ZHenNan: ME",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/momo5757/momo5757.github.io.git"
+  },
+  "scripts": {
+    "build": "workbox-cli generate:sw"
+  },
+  "author": {
+    "name": "akasfei"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/momo5757/momo5757.github.io/issues"
+  },
+  "homepage": "wzhn.me",
+  "devDependencies": {
+    "workbox-cli": "^2.1.2"
+  }
+}
