@@ -741,7 +741,7 @@ title: wzhn.me
     {% else %}
     <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{work.src}}');{{work.style}}" data-src="{{site.url}}{{site.baseurl}}/{{work.src}}"{% if work.doc %} data-doc="true"{% endif %}>
       {% if work.doc %}
-      <div class="doc">{{work.doc | markdownify}}</div>
+      <script class="doc" type="text/html">{{img.doc | markdownify}}</script>
       {% endif %}
       <div class="overlay">
         <div class="details">
@@ -757,7 +757,7 @@ title: wzhn.me
     <header>PHOTOGRAPHY</header>
     {% for img in site.data.photography %}
     {% if img.doc %}
-    <div class="doc">{{img.doc | markdownify}}</div>
+    <script class="doc" type="text/html">{{img.doc | markdownify}}</script>
     {% endif %}
     <div class="project lazy" style="background-image: url('{{site.url}}{{site.baseurl}}/{{img.src}}');{{img.style}}" data-src="{{site.url}}{{site.baseurl}}/{{img.src}}"{% if img.doc %} data-doc="true"{% endif %}>
       <div class="overlay">
