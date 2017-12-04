@@ -859,7 +859,7 @@ title: wzhn.me
       });
     });
     // Project overlay active/deactive
-    [].forEach.call(document.querySelectorAll('.project'), function (el) {
+    [].forEach.call(document.querySelectorAll('div.project'), function (el) {
       el.addEventListener('click', function (e) {
         if (typeof e.currentTarget.dataset.doc !== 'undefined')
           document.getElementById('overlay-container').innerHTML = e.currentTarget.querySelector('.doc').innerHTML;
