@@ -10,6 +10,6 @@ const fileManifest = [{% for file in site.static_files %}{% if file.extname == "
 ];
 
 const workboxSW = new WorkboxSW({clientsClaim: true, skipWaiting: true});
+workboxSW.precache(fileManifest);
 workboxSW.router.registerRoute(/\/index\.html/, workboxSW.strategies.networkFirst());
 workboxSW.router.registerRoute(/\.(?:png|gif|jpg|jpeg|svg|ico|js)$/, workboxSW.strategies.cacheFirst());
-workboxSW.precache(fileManifest);
