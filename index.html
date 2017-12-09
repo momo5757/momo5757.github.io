@@ -798,7 +798,7 @@ title: wzhn.me
     <img src="{{site.url}}{{site.baseurl}}/favicon.svg" alt="">
     <div class="copyright-text">
       <span>© 2017 Wu Zhennan. All rights reserved.</span>
-      <span>Code licensed <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank">GPLV3</a>, design <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>.</span>
+      <span>Code licensed <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank">GPLV3</a>, design <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>. <a id="sw-toggle" href="javascript:void(0)">SW cache disabled.</a></span>
     </div>
   </div>
   <div id="overlay">
@@ -836,6 +836,24 @@ title: wzhn.me
       };
       document.querySelector('.drawer-menu > li.active').className = '';
       document.querySelectorAll('.drawer-menu > li')[i>0?i-1:i].className = 'active';
+    };
+    var registerSW = function (precacheAll) {
+      var url = '{{site.url}}{{site.baseurl}}/sw.js';
+      var toggle = document.getElementById('sw-toggle');
+      if (precacheAll) {
+        url = '{{site.url}}{{site.baseurl}}/sw-precache-all.js';
+        toggle.innerHTML = "Caching all images.";
+      } else {
+        toggle.innerHTML = "Caching loaded images.";
+      }
+      navigator.serviceWorker.register(url).then(function (registration) {
+        console.log('SW registered: ', registration);
+      }).catch(function (registrationError) {
+        console.log('SW registration failed: ', registrationError);
+      });
+      navigator.serviceWorker.ready.then(function () {
+        console.log('SW ready.');
+      });
     };
     // Floating Action Button, used to close overlay and open/close drawer
     document.getElementById('fab').addEventListener('click', function (e) {
@@ -899,10 +917,9 @@ title: wzhn.me
     // Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('{{site.url}}{{site.baseurl}}/sw.js').then(function (registration) {
-          console.log('SW registered: ', registration);
-        }).catch(function (registrationError) {
-          console.log('SW registration failed: ', registrationError);
+        registerSW(navigator.serviceWorker.controller && navigator.serviceWorker.controller.scriptURL.indexOf('sw-precache-all.js') >= 0);
+        document.getElementById('sw-toggle').addEventListener('click', function () {
+          registerSW(!(navigator.serviceWorker.controller && navigator.serviceWorker.controller.scriptURL.indexOf('sw-precache-all.js') >= 0));
         });
       });
     }
