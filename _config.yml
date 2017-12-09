@@ -27,6 +27,9 @@ markdown: kramdown
 plugins:
   - jekyll-feed
 
+precache: # Files to precache other than image files and index.html
+  - "/workbox-sw/workbox-sw.js"
+  - "/smooth-scroll/dist/js/smooth-scroll.polyfills.min.js"
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
