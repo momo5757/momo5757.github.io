@@ -3,8 +3,8 @@ layout: null
 title: wzhn.me
 ---
 importScripts('workbox-sw/workbox-sw.js');
-importScripts('workbox-sw/workbox-cache-expiration.prod.js');
 importScripts('workbox-sw/workbox-core.prod.js');
+importScripts('workbox-sw/workbox-cache-expiration.prod.js');
 importScripts('workbox-sw/workbox-precaching.prod.js');
 importScripts('workbox-sw/workbox-routing.prod.js');
 importScripts('workbox-sw/workbox-strategies.prod.js');
