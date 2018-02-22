@@ -390,8 +390,12 @@ title: wzhn.me
       background-size: cover;
       background-repeat: no-repeat;
       background-position: 50% 50%;
-      transition: background-position 0.75s;
+      transition: all 0.75s;
       cursor: pointer;
+      opacity: 1;
+    }
+    .work > .project.lazy {
+      opacity: 0;
     }
     .work > .project > .doc {
       display: none;
@@ -798,7 +802,7 @@ title: wzhn.me
     <img src="{{site.url}}{{site.baseurl}}/favicon.svg" alt="">
     <div class="copyright-text">
       <span>© 2017 Wu Zhennan. All rights reserved.</span>
-      <span>Code licensed <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank">GPLV3</a>, design <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>. <a id="sw-toggle" href="javascript:void(0)">SW cache disabled.</a></span>
+      <span>Code licensed <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank">GPLV3</a>, design <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>. <a id="sw-status" href="javascript:void(0)">SW not supported.</a></span>
     </div>
   </div>
   <div id="overlay">
@@ -837,15 +841,29 @@ title: wzhn.me
       document.querySelector('.drawer-menu > li.active').className = '';
       document.querySelectorAll('.drawer-menu > li')[i>0?i-1:i].className = 'active';
     };
-    var registerSW = function (precacheAll) {
-      var url = '{{site.url}}{{site.baseurl}}/sw.js';
-      var toggle = document.getElementById('sw-toggle');
-      if (precacheAll) {
-        url = '{{site.url}}{{site.baseurl}}/sw-precache-all.js';
-        toggle.innerHTML = "Caching all images.";
-      } else {
-        toggle.innerHTML = "Caching loaded images.";
+    var scrollHandler = function (e) {
+      var now = new Date().getTime();
+      // Event throttling
+      if (now - lastScroll > 100) {
+        lastScroll = now;
+        [].forEach.call(document.querySelectorAll('.event.standby'), function (el) {
+          if (inViewport(el))
+            el.className = el.className.replace('standby', '').trim();
+        });
+        // Lazy loading project images
+        [].forEach.call(document.querySelectorAll('.project.lazy'), function (el) {
+          if (inViewport(el)) {
+            el.style.backgroundImage = 'url(\'' + el.dataset.src + '\')';
+            el.className = el.className.replace('lazy', '').trim();
+          }
+        });
+        if (document.getElementById('drawer').className.indexOf('active') === -1)
+          return;
+        setDrawerMenu();
       }
+    };
+    var registerSW = function () {
+      var url = '{{site.url}}{{site.baseurl}}/sw.js';
       navigator.serviceWorker.register(url).then(function (registration) {
         console.log('SW registered: ', registration);
       }).catch(function (registrationError) {
@@ -891,36 +909,16 @@ title: wzhn.me
     });
     // Scrollspy
     var lastScroll = 0;
-    window.addEventListener('scroll', function (e) {
-      var now = new Date().getTime();
-      // Event throttling
-      if (now - lastScroll > 100) {
-        lastScroll = now;
-        [].forEach.call(document.querySelectorAll('.event.standby'), function (el) {
-          if (inViewport(el))
-            el.className = el.className.replace('standby', '').trim();
-        });
-        // Lazy loading project images
-        [].forEach.call(document.querySelectorAll('.project.lazy'), function (el) {
-          if (inViewport(el)) {
-            el.style.backgroundImage = 'url(\'' + el.dataset.src + '\')';
-            el.className = el.className.replace('lazy', '').trim();
-          }
-        });
-        if (document.getElementById('drawer').className.indexOf('active') === -1)
-          return;
-        setDrawerMenu();
-      }
-    });
+    window.addEventListener('scroll', scrollHandler);
+    scrollHandler();
     // SmoothScroll
     var scroll = new SmoothScroll('a[href*="#"]', {speed: 750});
     // Service Worker
     if ('serviceWorker' in navigator) {
+      document.getElementById('sw-status').innerHTML = 'SW loading...';
       window.addEventListener('load', function () {
-        registerSW(navigator.serviceWorker.controller && navigator.serviceWorker.controller.scriptURL.indexOf('sw-precache-all.js') >= 0);
-        document.getElementById('sw-toggle').addEventListener('click', function () {
-          registerSW(!(navigator.serviceWorker.controller && navigator.serviceWorker.controller.scriptURL.indexOf('sw-precache-all.js') >= 0));
-        });
+        document.getElementById('sw-status').innerHTML = 'SW enabled.';
+        registerSW();
       });
     }
   </script>
