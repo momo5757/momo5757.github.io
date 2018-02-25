@@ -22,7 +22,7 @@ workbox.skipWaiting();
 //workbox.core.setLogLevel(workbox.core.LOG_LEVELS.debug);
 workbox.core.setCacheNameDetails({prefix: 'workbox', suffix: 'wzhn.me', precache: 'cache'});
 workbox.precaching.precacheAndRoute(minimalFiles);
-workbox.routing.registerRoute(/\/index\.html/, workbox.strategies.staleWhileRevalidate());
+workbox.routing.registerRoute(/\.html$/, workbox.strategies.staleWhileRevalidate());
 workbox.routing.registerRoute(/\.(?:png|gif|jpg|jpeg|svg|ico|js)$/, workbox.strategies.cacheFirst({
   cacheName: 'workbox-cache-wzhn.me',
   plugins: [
