@@ -1,9 +1,9 @@
 this.workbox = this.workbox || {};
-this.workbox.precaching = (function (cacheNames_mjs,WorkboxError_mjs,fetchWrapper_mjs,cacheWrapper_mjs,assert_mjs,DBWrapper_mjs,logger_mjs,getFriendlyURL_mjs) {
+this.workbox.precaching = (function (DBWrapper_mjs,logger_mjs,cacheNames_mjs,WorkboxError_mjs,fetchWrapper_mjs,cacheWrapper_mjs,assert_mjs,getFriendlyURL_mjs) {
 'use strict';
 
 try {
-  self.workbox.v['workbox:precaching:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:precaching:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*
@@ -42,7 +42,7 @@ class PrecacheEntry {
     this._originalInput = originalInput;
     this._entryId = url;
     this._revision = revision;
-    const requestAsCacheKey = new Request(url);
+    const requestAsCacheKey = new Request(url, { credentials: 'same-origin' });
     this._cacheRequest = requestAsCacheKey;
     this._networkRequest = shouldCacheBust ? this._cacheBustRequest(requestAsCacheKey) : requestAsCacheKey;
   }
@@ -58,7 +58,9 @@ class PrecacheEntry {
    */
   _cacheBustRequest(request) {
     let url = request.url;
-    const requestOptions = {};
+    const requestOptions = {
+      credentials: 'same-origin'
+    };
     if ('cache' in Request.prototype) {
       // Make use of the Request cache mode where we can.
       // Reload skips the HTTP cache for outgoing requests and updates
@@ -108,13 +110,13 @@ class PrecachedDetailsModel {
   /**
    * Construct a new model for a specific cache.
    *
-   * @param {string} cacheName
-   *
+   * @param {string} dbName
    * @private
    */
-  constructor(cacheName) {
-    this._cacheName = cacheNames_mjs.cacheNames.getPrecacheName(cacheName);
-    this._db = new DBWrapper_mjs.DBWrapper(`workbox-precaching`, 2, {
+  constructor(dbName) {
+    // This ensures the db name contains only letters, numbers, '-', '_' and '$'
+    const filteredDBName = dbName.replace(/[^\w-]/g, '_');
+    this._db = new DBWrapper_mjs.DBWrapper(filteredDBName, 2, {
       onupgradeneeded: this._handleUpgrade
     });
   }
@@ -146,12 +148,13 @@ class PrecachedDetailsModel {
    * Check if an entry is already cached. Returns false if
    * the entry isn't cached or the revision has changed.
    *
+   * @param {string} cacheName
    * @param {PrecacheEntry} precacheEntry
    * @return {boolean}
    *
    * @private
    */
-  _isEntryCached(precacheEntry) {
+  _isEntryCached(cacheName, precacheEntry) {
     var _this = this;
 
     return babelHelpers.asyncToGenerator(function* () {
@@ -160,7 +163,7 @@ class PrecachedDetailsModel {
         return false;
       }
 
-      const openCache = yield caches.open(_this._cacheName);
+      const openCache = yield caches.open(cacheName);
       const cachedResponse = yield openCache.match(precacheEntry._cacheRequest);
       return !!cachedResponse;
     })();
@@ -574,7 +577,7 @@ class PrecacheController {
    * @param {Array<Object>} options.plugins Plugins to be used for fetching
    * and caching during install.
    * @return {
-   * Promise<module:workbox-precaching.PrecacheController.InstallResult>}
+   * Promise<workbox.precaching.InstallResult>}
    */
   install(options = {}) {
     var _this = this;
@@ -595,11 +598,14 @@ class PrecacheController {
         }
       }
 
+      // Clear any existing temp cache
+      yield caches.delete(_this._getTempCacheName());
+
       const entriesToPrecache = [];
       const entriesAlreadyPrecached = [];
 
       for (const precacheEntry of _this._entriesToCacheMap.values()) {
-        if (yield _this._precacheDetailsModel._isEntryCached(precacheEntry)) {
+        if (yield _this._precacheDetailsModel._isEntryCached(_this._cacheName, precacheEntry)) {
           entriesAlreadyPrecached.push(precacheEntry);
         } else {
           entriesToPrecache.push(precacheEntry);
@@ -608,7 +614,7 @@ class PrecacheController {
 
       // Wait for all requests to be cached.
       yield Promise.all(entriesToPrecache.map(function (precacheEntry) {
-        return _this._cacheEntry(precacheEntry, options.plugins);
+        return _this._cacheEntryInTemp(precacheEntry, options.plugins);
       }));
 
       {
@@ -620,6 +626,51 @@ class PrecacheController {
         notUpdatedEntries: entriesAlreadyPrecached
       };
     })();
+  }
+
+  /**
+   * Takes the current set of temporary files and moves them to the final
+   * cache, deleting the temporary cache once copying is complete.
+   *
+   * @return {
+   * Promise<workbox.precaching.CleanupResult>}
+   * Resolves with an object containing details of the deleted cache requests
+   * and precache revision details.
+   */
+  activate() {
+    var _this2 = this;
+
+    return babelHelpers.asyncToGenerator(function* () {
+      const tempCache = yield caches.open(_this2._getTempCacheName());
+
+      const requests = yield tempCache.keys();
+      yield Promise.all(requests.map((() => {
+        var _ref = babelHelpers.asyncToGenerator(function* (request) {
+          const response = yield tempCache.match(request);
+          yield cacheWrapper_mjs.cacheWrapper.put(_this2._cacheName, request, response);
+          yield tempCache.delete(request);
+        });
+
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      })()));
+
+      yield caches.delete(_this2._getTempCacheName());
+
+      return _this2._cleanup();
+    })();
+  }
+
+  /**
+   * Returns the name of the temporary cache.
+   *
+   * @return {string}
+   *
+   * @private
+   */
+  _getTempCacheName() {
+    return `${this._cacheName}-temp`;
   }
 
   /**
@@ -635,8 +686,8 @@ class PrecacheController {
    * promise resolves with true if the entry was cached / updated and
    * false if the entry is already cached and up-to-date.
    */
-  _cacheEntry(precacheEntry, plugins) {
-    var _this2 = this;
+  _cacheEntryInTemp(precacheEntry, plugins) {
+    var _this3 = this;
 
     return babelHelpers.asyncToGenerator(function* () {
       let response = yield fetchWrapper_mjs.fetchWrapper.fetch(precacheEntry._networkRequest, null, plugins);
@@ -645,9 +696,9 @@ class PrecacheController {
         response = yield cleanRedirect(response);
       }
 
-      yield cacheWrapper_mjs.cacheWrapper.put(_this2._cacheName, precacheEntry._cacheRequest, response, plugins);
+      yield cacheWrapper_mjs.cacheWrapper.put(_this3._getTempCacheName(), precacheEntry._cacheRequest, response, plugins);
 
-      yield _this2._precacheDetailsModel._addEntry(precacheEntry);
+      yield _this3._precacheDetailsModel._addEntry(precacheEntry);
 
       return true;
     })();
@@ -660,21 +711,23 @@ class PrecacheController {
    * This should be called in the service worker activate event.
    *
    * @return {
-   * Promise<module:workbox-precaching.PrecacheController.CleanupResult>}
+   * Promise<workbox.precaching.CleanupResult>}
    * Resolves with an object containing details of the deleted cache requests
    * and precache revision details.
+   *
+   * @private
    */
-  cleanup() {
-    var _this3 = this;
+  _cleanup() {
+    var _this4 = this;
 
     return babelHelpers.asyncToGenerator(function* () {
       const expectedCacheUrls = [];
-      _this3._entriesToCacheMap.forEach(function (entry) {
+      _this4._entriesToCacheMap.forEach(function (entry) {
         const fullUrl = new URL(entry._cacheRequest.url, location).toString();
         expectedCacheUrls.push(fullUrl);
       });
 
-      const [deletedCacheRequests, deletedRevisionDetails] = yield Promise.all([_this3._cleanupCache(expectedCacheUrls), _this3._cleanupDetailsModel(expectedCacheUrls)]);
+      const [deletedCacheRequests, deletedRevisionDetails] = yield Promise.all([_this4._cleanupCache(expectedCacheUrls), _this4._cleanupDetailsModel(expectedCacheUrls)]);
 
       {
         printCleanupDetails(deletedCacheRequests, deletedRevisionDetails);
@@ -698,15 +751,15 @@ class PrecacheController {
    * of cached requests that were deleted.
    */
   _cleanupCache(expectedCacheUrls) {
-    var _this4 = this;
+    var _this5 = this;
 
     return babelHelpers.asyncToGenerator(function* () {
-      if (!(yield caches.has(_this4._cacheName))) {
+      if (!(yield caches.has(_this5._cacheName))) {
         // Cache doesn't exist, so nothing to delete
         return [];
       }
 
-      const cache = yield caches.open(_this4._cacheName);
+      const cache = yield caches.open(_this5._cacheName);
       const cachedRequests = yield cache.keys();
       const cachedRequestsToDelete = cachedRequests.filter(function (cachedRequest) {
         return !expectedCacheUrls.includes(new URL(cachedRequest.url, location).toString());
@@ -732,17 +785,17 @@ class PrecacheController {
    * from indexedDB.
    */
   _cleanupDetailsModel(expectedCacheUrls) {
-    var _this5 = this;
+    var _this6 = this;
 
     return babelHelpers.asyncToGenerator(function* () {
-      const revisionedEntries = yield _this5._precacheDetailsModel._getAllEntries();
+      const revisionedEntries = yield _this6._precacheDetailsModel._getAllEntries();
       const detailsToDelete = revisionedEntries.filter(function (entry) {
         const fullUrl = new URL(entry.value.url, location).toString();
         return !expectedCacheUrls.includes(fullUrl);
       });
 
       yield Promise.all(detailsToDelete.map(function (entry) {
-        return _this5._precacheDetailsModel._deleteEntry(entry.primaryKey);
+        return _this6._precacheDetailsModel._deleteEntry(entry.primaryKey);
       }));
       return detailsToDelete.map(function (entry) {
         return entry.value.url;
@@ -775,7 +828,6 @@ class PrecacheController {
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
 
 
 var publicAPI = Object.freeze({
@@ -937,7 +989,7 @@ moduleExports.precache = entries => {
     }));
   });
   self.addEventListener('activate', event => {
-    event.waitUntil(precacheController.cleanup());
+    event.waitUntil(precacheController.activate());
   });
 };
 
@@ -983,7 +1035,20 @@ moduleExports.addRoute = options => {
 
     let responsePromise = caches.open(cacheName).then(cache => {
       return cache.match(precachedUrl);
+    }).then(cachedResponse => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      // Fall back to the network if we don't have a cached response (perhaps
+      // due to manual cache cleanup).
+      {
+        logger_mjs.logger.debug(`The precached response for ` + `${getFriendlyURL_mjs.getFriendlyURL(precachedUrl)} in ${cacheName} was not found. ` + `Falling back to the network instead.`);
+      }
+
+      return fetch(precachedUrl);
     });
+
     {
       responsePromise = responsePromise.then(response => {
         // Workbox is going to handle the route.

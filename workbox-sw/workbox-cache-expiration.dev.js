@@ -1,9 +1,9 @@
 this.workbox = this.workbox || {};
-this.workbox.expiration = (function (exports,WorkboxError_mjs,assert_mjs,logger_mjs,DBWrapper_mjs,cacheNames_mjs) {
+this.workbox.expiration = (function (exports,DBWrapper_mjs,WorkboxError_mjs,assert_mjs,logger_mjs,cacheNames_mjs) {
 'use strict';
 
 try {
-  self.workbox.v['workbox:cache-expiration:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:cache-expiration:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*

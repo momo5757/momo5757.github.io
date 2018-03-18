@@ -1,9 +1,9 @@
 this.workbox = this.workbox || {};
-this.workbox.backgroundSync = (function (WorkboxError_mjs,logger_mjs,DBWrapper_mjs) {
+this.workbox.backgroundSync = (function (DBWrapper_mjs,WorkboxError_mjs,logger_mjs,assert_mjs,getFriendlyURL_mjs) {
 'use strict';
 
 try {
-  self.workbox.v['workbox:background-sync:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:background-sync:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*
@@ -123,6 +123,27 @@ class StorableRequest {
    */
   toRequest() {
     return new Request(this.url, this.requestInit);
+  }
+
+  /**
+   * Creates and returns a deep clone of the instance.
+   *
+   * @return {StorableRequest}
+   *
+   * @private
+   */
+  clone() {
+    const requestInit = Object.assign({}, this.requestInit);
+    requestInit.headers = Object.assign({}, this.requestInit.headers);
+    if (this.requestInit.body) {
+      requestInit.body = this.requestInit.body.slice();
+    }
+
+    return new StorableRequest({
+      url: this.url,
+      timestamp: this.timestamp,
+      requestInit
+    });
   }
 }
 
@@ -319,10 +340,23 @@ class Queue {
     var _this = this;
 
     return babelHelpers.asyncToGenerator(function* () {
+      {
+        assert_mjs.assert.isInstance(request, Request, {
+          moduleName: 'workbox-background-sync',
+          className: 'Queue',
+          funcName: 'addRequest',
+          paramName: 'request'
+        });
+      }
+
       const storableRequest = yield StorableRequest.fromRequest(request.clone());
       yield _this._runCallback('requestWillEnqueue', storableRequest);
       yield _this._queueStore.addEntry(storableRequest);
       yield _this._registerSync();
+      {
+        logger_mjs.logger.log(`Request for '${getFriendlyURL_mjs.getFriendlyURL(storableRequest.url)}' has been
+          added to background sync queue '${_this._name}'.`);
+      }
     })();
   }
 
@@ -343,6 +377,10 @@ class Queue {
 
       let storableRequest;
       while (storableRequest = yield _this2._queueStore.getAndRemoveOldestEntry()) {
+        // Make a copy so the unmodified request can be stored
+        // in the event of a replay failure.
+        const storableRequestClone = storableRequest.clone();
+
         // Ignore requests older than maxRetentionTime.
         const maxRetentionTimeInMs = _this2._maxRetentionTime * 60 * 1000;
         if (now - storableRequest.timestamp > maxRetentionTimeInMs) {
@@ -356,9 +394,17 @@ class Queue {
         try {
           // Clone the request before fetching so callbacks get an unused one.
           replay.response = yield fetch(replay.request.clone());
+          {
+            logger_mjs.logger.log(`Request for '${getFriendlyURL_mjs.getFriendlyURL(storableRequest.url)}'
+             has been replayed`);
+          }
         } catch (err) {
+          {
+            logger_mjs.logger.log(`Request for '${getFriendlyURL_mjs.getFriendlyURL(storableRequest.url)}'
+             failed to replay`);
+          }
           replay.error = err;
-          failedRequests.push(storableRequest);
+          failedRequests.push(storableRequestClone);
         }
 
         replayedRequests.push(replay);
@@ -405,9 +451,18 @@ class Queue {
   _addSyncListener() {
     if ('sync' in registration) {
       self.addEventListener('sync', event => {
-        event.waitUntil(this.replayRequests());
+        if (event.tag === `${TAG_PREFIX}:${this._name}`) {
+          {
+            logger_mjs.logger.log(`Background sync for tag '${event.tag}'
+                has been received, starting replay now`);
+          }
+          event.waitUntil(this.replayRequests());
+        }
       });
     } else {
+      {
+        logger_mjs.logger.log(`Background sync replaying without background sync event`);
+      }
       // If the browser doesn't support background sync, retry
       // every time the service worker starts up as a fallback.
       this.replayRequests();
@@ -512,8 +567,7 @@ class Plugin {
 */
 
 
-
-var publicAPI$1 = Object.freeze({
+var publicAPI = Object.freeze({
 	Queue: Queue,
 	Plugin: Plugin
 });
@@ -533,8 +587,8 @@ var publicAPI$1 = Object.freeze({
  limitations under the License.
 */
 
-return publicAPI$1;
+return publicAPI;
 
-}(workbox.core._private,workbox.core._private,workbox.core._private));
+}(workbox.core._private,workbox.core._private,workbox.core._private,workbox.core._private,workbox.core._private));
 
 //# sourceMappingURL=workbox-background-sync.dev.js.map

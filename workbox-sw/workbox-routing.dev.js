@@ -3,7 +3,7 @@ this.workbox.routing = (function (assert_mjs,logger_mjs,WorkboxError_mjs,getFrie
 'use strict';
 
 try {
-  self.workbox.v['workbox:routing:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:routing:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*
@@ -647,7 +647,6 @@ class NavigationRoute extends Route {
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
 
 
 var publicAPI = Object.freeze({

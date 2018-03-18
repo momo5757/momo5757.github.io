@@ -3,7 +3,7 @@ this.workbox.broadcastUpdate = (function (exports,WorkboxError_mjs,logger_mjs,as
 'use strict';
 
 try {
-  self.workbox.v['workbox:broadcast-cache-update:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:broadcast-cache-update:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*
@@ -135,6 +135,16 @@ var messageTypes = {
  * @memberof workbox.broadcastUpdate
  */
 const broadcastUpdate = (channel, cacheName, url, source) => {
+  // There are browsers which support service workers but don't support the
+  // Broadcast Channel API.
+  // See https://github.com/GoogleChrome/workbox/issues/1304
+  if (!('BroadcastChannel' in self && channel)) {
+    {
+      logger_mjs.logger.debug(`${url} was updated, but the Broadcast Channel API is not ` + `available in the current browser.`);
+    }
+    return;
+  }
+
   {
     assert_mjs.assert.isInstance(channel, BroadcastChannel, {
       moduleName: 'workbox-broadcast-cache-update',
@@ -226,13 +236,14 @@ class BroadcastCacheUpdate {
   }
 
   /**
-   * @return {BroadcastChannel} The BroadcastChannel instance used for
-   * broadcasting updates.
+   * @return {BroadcastChannel|undefined} The BroadcastChannel instance used for
+   * broadcasting updates, or undefined if the browser doesn't support the
+   * Broadcast Channel API.
    *
    * @private
    */
   _getChannel() {
-    if (!this._channel) {
+    if ('BroadcastChannel' in self && !this._channel) {
       this._channel = new BroadcastChannel(this._channelName);
     }
     return this._channel;

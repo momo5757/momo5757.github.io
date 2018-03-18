@@ -3,7 +3,7 @@ this.workbox.googleAnalytics = (function (exports,Plugin_mjs,cacheNames_mjs,Rout
 'use strict';
 
 try {
-  self.workbox.v['workbox:google-analytics:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:google-analytics:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*
@@ -27,7 +27,6 @@ const GOOGLE_ANALYTICS_HOST = 'www.google-analytics.com';
 const GTM_HOST = 'www.googletagmanager.com';
 const ANALYTICS_JS_PATH = '/analytics.js';
 const GTAG_JS_PATH = '/gtag/js';
-
 
 // This RegExp matches all known Measurement Protocol single-hit collect
 // endpoints. Most of the time the default path (/collect) is used, but
@@ -93,21 +92,27 @@ const getTextFromBlob = (() => {
  */
 const createRequestWillReplayCallback = config => {
   return (() => {
-    var _ref2 = babelHelpers.asyncToGenerator(function* ({ url, timestamp, requestInit }) {
+    var _ref2 = babelHelpers.asyncToGenerator(function* (storableRequest) {
+      let { url, requestInit, timestamp } = storableRequest;
       url = new URL(url);
 
       // Measurement protocol requests can set their payload parameters in either
       // the URL query string (for GET requests) or the POST body.
       let params;
       if (requestInit.body) {
-        const payload = yield getTextFromBlob(requestInit.body);
+        const payload = requestInit.body instanceof Blob ? yield getTextFromBlob(requestInit.body) : requestInit.body;
+
         params = new URLSearchParams(payload);
       } else {
         params = url.searchParams;
       }
 
-      // Set the qt param prior to apply the hitFilter or parameterOverrides.
-      const queueTime = Date.now() - timestamp;
+      // Calculate the qt param, accounting for the fact that an existing
+      // qt param may be present and should be updated rather than replaced.
+      const originalHitTime = timestamp - (Number(params.get('qt')) || 0);
+      const queueTime = Date.now() - originalHitTime;
+
+      // Set the qt param prior to applying the hitFilter or parameterOverrides.
       params.set('qt', queueTime);
 
       if (config.parameterOverrides) {
@@ -125,10 +130,10 @@ const createRequestWillReplayCallback = config => {
       requestInit.method = 'POST';
       requestInit.mode = 'cors';
       requestInit.credentials = 'omit';
-      requestInit.headers = '[["Content-Type", "text/plain"]]';
+      requestInit.headers = { 'Content-Type': 'text/plain' };
 
-      // Ignore URL search params as they're in the post body.
-      requestInit.url = `${url.origin}${url.pathname}`;
+      // Ignore URL search params as they're now in the post body.
+      storableRequest.url = `${url.origin}${url.pathname}`;
     });
 
     return function (_x2) {

@@ -1,9 +1,9 @@
 this.workbox = this.workbox || {};
-this.workbox.strategies = (function (cacheNames_mjs,cacheWrapper_mjs,fetchWrapper_mjs,assert_mjs,logger_mjs) {
+this.workbox.strategies = (function (logger_mjs,cacheNames_mjs,cacheWrapper_mjs,fetchWrapper_mjs,assert_mjs) {
 'use strict';
 
 try {
-  self.workbox.v['workbox:strategies:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:strategies:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*
@@ -30,7 +30,7 @@ const getFriendlyURL = url => {
 };
 
 var messages = {
-  strategyStart: (strategyName, event) => `Using ${strategyName} to repond ` + `to  '${getFriendlyURL(event.request.url)}'`,
+  strategyStart: (strategyName, event) => `Using ${strategyName} to respond ` + `to  '${getFriendlyURL(event.request.url)}'`,
   printFinalResponse: response => {
     if (response) {
       logger_mjs.logger.groupCollapsed(`View the final response here.`);
@@ -75,10 +75,14 @@ class CacheFirst {
    * [workbox-core]{@link workbox.core.cacheNames}.
    * @param {string} options.plugins [Plugins]{@link https://docs.google.com/document/d/1Qye_GDVNF1lzGmhBaUvbgwfBWRQDdPgwUAgsbs8jhsk/edit?usp=sharing}
    * to use in conjunction with this caching strategy.
+   * @param {Object} options.fetchOptions Values passed along to the
+   * [`init`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters)
+   * of all fetch() requests made by this strategy.
    */
   constructor(options = {}) {
     this._cacheName = cacheNames_mjs.cacheNames.getRuntimeName(options.cacheName);
     this._plugins = options.plugins || [];
+    this._fetchOptions = options.fetchOptions || null;
   }
 
   /**
@@ -162,7 +166,7 @@ class CacheFirst {
     var _this2 = this;
 
     return babelHelpers.asyncToGenerator(function* () {
-      const response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, null, _this2._plugins);
+      const response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, _this2._fetchOptions, _this2._plugins);
 
       // Keep the service worker while we put the request to the cache
       const responseClone = response.clone();
@@ -328,6 +332,9 @@ class NetworkFirst {
    * [workbox-core]{@link workbox.core.cacheNames}.
    * @param {string} options.plugins [Plugins]{@link https://docs.google.com/document/d/1Qye_GDVNF1lzGmhBaUvbgwfBWRQDdPgwUAgsbs8jhsk/edit?usp=sharing}
    * to use in conjunction with this caching strategy.
+   * @param {Object} options.fetchOptions Values passed along to the
+   * [`init`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters)
+   * of all fetch() requests made by this strategy.
    * @param {number} options.networkTimeoutSeconds If set, any network requests
    * that fail to respond within the timeout will fallback to the cache.
    *
@@ -357,6 +364,8 @@ class NetworkFirst {
         });
       }
     }
+
+    this._fetchOptions = options.fetchOptions || null;
   }
 
   /**
@@ -395,7 +404,16 @@ class NetworkFirst {
       const networkPromise = _this._getNetworkPromise(timeoutId, event, logs);
       promises.push(networkPromise);
 
-      const response = yield Promise.race(promises);
+      // Promise.race() will resolve as soon as the first promise resolves.
+      let response = yield Promise.race(promises);
+      // If Promise.race() resolved with null, it might be due to a network
+      // timeout + a cache miss. If that were to happen, we'd rather wait until
+      // the networkPromise resolves instead of returning null.
+      // Note that it's fine to await an already-resolved promise, so we don't
+      // have to check to see if it's still "in flight".
+      if (!response) {
+        response = yield networkPromise;
+      }
 
       {
         logger_mjs.logger.groupCollapsed(messages.strategyStart('NetworkFirst', event));
@@ -460,7 +478,7 @@ class NetworkFirst {
       let error;
       let response;
       try {
-        response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, _this3._plugins);
+        response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, _this3._fetchOptions, _this3._plugins);
       } catch (err) {
         error = err;
       }
@@ -545,10 +563,14 @@ class NetworkOnly {
    * [workbox-core]{@link workbox.core.cacheNames}.
    * @param {string} options.plugins [Plugins]{@link https://docs.google.com/document/d/1Qye_GDVNF1lzGmhBaUvbgwfBWRQDdPgwUAgsbs8jhsk/edit?usp=sharing}
    * to use in conjunction with this caching strategy.
+   * @param {Object} options.fetchOptions Values passed along to the
+   * [`init`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters)
+   * of all fetch() requests made by this strategy.
    */
   constructor(options = {}) {
     this._cacheName = cacheNames_mjs.cacheNames.getRuntimeName(options.cacheName);
     this._plugins = options.plugins || [];
+    this._fetchOptions = options.fetchOptions || null;
   }
 
   /**
@@ -577,7 +599,7 @@ class NetworkOnly {
       let error;
       let response;
       try {
-        response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, null, _this._plugins);
+        response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, _this._fetchOptions, _this._plugins);
       } catch (err) {
         error = err;
       }
@@ -648,6 +670,9 @@ class StaleWhileRevalidate {
    * [workbox-core]{@link workbox.core.cacheNames}.
    * @param {string} options.plugins [Plugins]{@link https://docs.google.com/document/d/1Qye_GDVNF1lzGmhBaUvbgwfBWRQDdPgwUAgsbs8jhsk/edit?usp=sharing}
    * to use in conjunction with this caching strategy.
+   * @param {Object} options.fetchOptions Values passed along to the
+   * [`init`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters)
+   * of all fetch() requests made by this strategy.
    */
   constructor(options = {}) {
     this._cacheName = cacheNames_mjs.cacheNames.getRuntimeName(options.cacheName);
@@ -660,6 +685,8 @@ class StaleWhileRevalidate {
       // No plugins passed in, use the default plugin.
       this._plugins = [cacheOkAndOpaquePlugin];
     }
+
+    this._fetchOptions = options.fetchOptions || null;
   }
 
   /**
@@ -725,7 +752,7 @@ class StaleWhileRevalidate {
     var _this2 = this;
 
     return babelHelpers.asyncToGenerator(function* () {
-      const response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, null, _this2._plugins);
+      const response = yield fetchWrapper_mjs.fetchWrapper.fetch(event.request, _this2._fetchOptions, _this2._plugins);
 
       event.waitUntil(cacheWrapper_mjs.cacheWrapper.put(_this2._cacheName, event.request, response.clone(), _this2._plugins));
 
@@ -749,7 +776,6 @@ class StaleWhileRevalidate {
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
 
 
 var publicAPI = Object.freeze({
@@ -777,27 +803,27 @@ var publicAPI = Object.freeze({
 
 /**
  * @function workbox.strategies.cacheFirst
- * @param {StrategyOptions} options
+ * @param {workbox.strategies.StrategyOptions} options
  */
 
 /**
  * @function workbox.strategies.cacheOnly
- * @param {StrategyOptions} options
+ * @param {workbox.strategies.StrategyOptions} options
  */
 
 /**
  * @function workbox.strategies.networkFirst
- * @param {StrategyOptions} options
+ * @param {workbox.strategies.StrategyOptions} options
  */
 
 /**
  * @function workbox.strategies.networkOnly
- * @param {StrategyOptions} options
+ * @param {workbox.strategies.StrategyOptions} options
  */
 
 /**
  * @function workbox.strategies.staleWhileRevalidate
- * @param {StrategyOptions} options
+ * @param {workbox.strategies.StrategyOptions} options
  */
 
 const mapping = {

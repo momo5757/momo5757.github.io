@@ -40,7 +40,7 @@ this.workbox.core = (function () {
 'use strict';
 
 try {
-  self.workbox.v['workbox:core:3.0.0-beta.0'] = 1;
+  self.workbox.v['workbox:core:3.0.0'] = 1;
 } catch (e) {} // eslint-disable-line
 
 /*
@@ -255,6 +255,9 @@ var messages = {
   },
   'range-not-satisfiable': ({ size, start, end }) => {
     return `The start (${start}) and end (${end}) values in the Range are ` + `not satisfiable by the cached response, which is ${size} bytes.`;
+  },
+  'attempt-to-cache-non-get-request': ({ url, method }) => {
+    return `Unable to cache '${url}' because it is a '${method}' request and ` + `only 'GET' requests can be cached.`;
   }
 };
 
@@ -357,7 +360,7 @@ const _createCacheName = cacheName => {
   return [_cacheNameDetails.prefix, cacheName, _cacheNameDetails.suffix].filter(value => value.length > 0).join('-');
 };
 
-const exports$1 = {
+const cacheNames = {
   updateDetails: details => {
     Object.keys(_cacheNameDetails).forEach(key => {
       if (typeof details[key] !== 'undefined') {
@@ -392,6 +395,10 @@ const exports$1 = {
   limitations under the License.
 */
 
+// Safari doesn't print all console.groupCollapsed() arguments.
+// Related bug: https://bugs.webkit.org/show_bug.cgi?id=182754
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 const GREY = `#7f8c8d`;
 const GREEN = `#2ecc71`;
 const YELLOW = `#f39c12`;
@@ -414,7 +421,7 @@ const _print = function (keyName, logArgs, levelColor) {
     return;
   }
 
-  if (!levelColor) {
+  if (!levelColor || keyName === 'groupCollapsed' && isSafari) {
     console[keyName](...logArgs);
     return;
   }
@@ -429,7 +436,7 @@ const groupEnd = () => {
   }
 };
 
-const defaultExport$1 = {
+const defaultExport = {
   groupEnd,
   unprefixed: {
     groupEnd
@@ -437,8 +444,8 @@ const defaultExport$1 = {
 };
 
 const setupLogs = (keyName, color) => {
-  defaultExport$1[keyName] = (...args) => _print(keyName, args, color);
-  defaultExport$1.unprefixed[keyName] = (...args) => _print(keyName, args);
+  defaultExport[keyName] = (...args) => _print(keyName, args, color);
+  defaultExport.unprefixed[keyName] = (...args) => _print(keyName, args);
 };
 
 const levelToColor = {
@@ -541,7 +548,7 @@ const isArrayOfClass = (value, expectedClass, { moduleName, className, funcName,
   }
 };
 
-const finalExports$2 = {
+const finalAssertExports = {
   hasMethod,
   isArray,
   isInstance,
@@ -550,6 +557,84 @@ const finalExports$2 = {
   isType,
   isArrayOfClass
 };
+
+/*
+  Copyright 2017 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+/**
+ * Logs a warning to the user recommending changing
+ * to max-age=0 or no-cache.
+ *
+ * @param {string} cacheControlHeader
+ *
+ * @private
+ */
+function showWarning(cacheControlHeader) {
+  const docsUrl = 'https://developers.google.com/web/tools/workbox/guides/service-worker-checklist#cache-control_of_your_service_worker_file';
+  defaultExport.warn(`You are setting a 'cache-control' header of ` + `'${cacheControlHeader}' on your service worker file. This should be ` + `set to 'max-age=0' or 'no-cache' to ensure the latest service worker ` + `is served to your users. Learn more here: ${docsUrl}`);
+}
+
+/**
+ * Checks for cache-control header on SW file and
+ * warns the developer if it exists with a value
+ * other than max-age=0 or no-cache.
+ *
+ * @private
+ */
+function checkSWFileCacheHeaders() {
+  // This is wrapped as an iife to allow async/await while making
+  //  rollup exclude it in builds.
+  babelHelpers.asyncToGenerator(function* () {
+    try {
+      const swFile = self.location.href;
+      const response = yield fetch(swFile);
+      if (!response.ok) {
+        // Response failed so nothing we can check;
+        return;
+      }
+
+      if (!response.headers.has('cache-control')) {
+        // No cache control header.
+        return;
+      }
+
+      const cacheControlHeader = response.headers.get('cache-control');
+      const maxAgeResult = /max-age\s*=\s*(\d*)/g.exec(cacheControlHeader);
+      if (maxAgeResult) {
+        if (parseInt(maxAgeResult[1], 10) === 0) {
+          return;
+        }
+      }
+
+      if (cacheControlHeader.indexOf('no-cache') !== -1) {
+        return;
+      }
+
+      if (cacheControlHeader.indexOf('no-store') !== -1) {
+        return;
+      }
+
+      showWarning(cacheControlHeader);
+    } catch (err) {
+      // NOOP
+    }
+  })();
+}
+
+const finalCheckSWFileCacheHeaders = checkSWFileCacheHeaders;
 
 /*
   Copyright 2017 Google Inc.
@@ -592,11 +677,15 @@ class WorkboxCore {
     // This is so it can get the current log level.
     {
       const padding = '   ';
-      defaultExport$1.groupCollapsed('Welcome to Workbox!');
-      defaultExport$1.unprefixed.log(`📖 Read the guides and documentation\n` + `${padding}https://developers.google.com/web/tools/workbox/`);
-      defaultExport$1.unprefixed.log(`❓ Use the [workbox] tag on StackOverflow to ask questions\n` + `${padding}https://stackoverflow.com/questions/ask?tags=workbox`);
-      defaultExport$1.unprefixed.log(`🐛 Found a bug? Report it on GitHub\n` + `${padding}https://github.com/GoogleChrome/workbox/issues/new`);
-      defaultExport$1.groupEnd();
+      defaultExport.groupCollapsed('Welcome to Workbox!');
+      defaultExport.unprefixed.log(`📖 Read the guides and documentation\n` + `${padding}https://developers.google.com/web/tools/workbox/`);
+      defaultExport.unprefixed.log(`❓ Use the [workbox] tag on StackOverflow to ask questions\n` + `${padding}https://stackoverflow.com/questions/ask?tags=workbox`);
+      defaultExport.unprefixed.log(`🐛 Found a bug? Report it on GitHub\n` + `${padding}https://github.com/GoogleChrome/workbox/issues/new`);
+      defaultExport.groupEnd();
+
+      if (typeof finalCheckSWFileCacheHeaders === 'function') {
+        finalCheckSWFileCacheHeaders();
+      }
     }
   }
 
@@ -614,9 +703,9 @@ class WorkboxCore {
    */
   get cacheNames() {
     return {
-      googleAnalytics: exports$1.getGoogleAnalyticsName(),
-      precache: exports$1.getPrecacheName(),
-      runtime: exports$1.getRuntimeName()
+      googleAnalytics: cacheNames.getGoogleAnalyticsName(),
+      precache: cacheNames.getPrecacheName(),
+      runtime: cacheNames.getRuntimeName()
     };
   }
 
@@ -642,7 +731,7 @@ class WorkboxCore {
   setCacheNameDetails(details) {
     {
       Object.keys(details).forEach(key => {
-        finalExports$2.isType(details[key], 'string', {
+        finalAssertExports.isType(details[key], 'string', {
           moduleName: 'workbox-core',
           className: 'WorkboxCore',
           funcName: 'setCacheNameDetails',
@@ -672,7 +761,7 @@ class WorkboxCore {
       }
     }
 
-    exports$1.updateDetails(details);
+    cacheNames.updateDetails(details);
   }
 
   /**
@@ -696,7 +785,7 @@ class WorkboxCore {
    */
   setLogLevel(newLevel) {
     {
-      finalExports$2.isType(newLevel, 'number', {
+      finalAssertExports.isType(newLevel, 'number', {
         moduleName: 'workbox-core',
         className: 'WorkboxCore',
         funcName: 'logLevel [setter]',
@@ -716,7 +805,7 @@ class WorkboxCore {
   }
 }
 
-var defaultExport = new WorkboxCore();
+var defaultExport$1 = new WorkboxCore();
 
 /*
   Copyright 2017 Google Inc.
@@ -823,9 +912,18 @@ const putWrapper = (() => {
 
     if (!responseToCache) {
       {
-        defaultExport$1.debug(`Response '${getFriendlyURL(request.url)}' will not be ` + `cached.`, responseToCache);
+        defaultExport.debug(`Response '${getFriendlyURL(request.url)}' will not be ` + `cached.`, responseToCache);
       }
       return;
+    }
+
+    {
+      if (responseToCache.method && responseToCache.method !== 'GET') {
+        throw new WorkboxError('attempt-to-cache-non-get-request', {
+          url: getFriendlyURL(request.url),
+          method: responseToCache.method
+        });
+      }
     }
 
     const cache = yield caches.open(cacheName);
@@ -835,7 +933,7 @@ const putWrapper = (() => {
     let oldResponse = updatePlugins.length > 0 ? yield matchWrapper(cacheName, request) : null;
 
     {
-      defaultExport$1.debug(`Updating the '${cacheName}' cache with a new Response for ` + `${getFriendlyURL(request.url)}.`);
+      defaultExport.debug(`Updating the '${cacheName}' cache with a new Response for ` + `${getFriendlyURL(request.url)}.`);
     }
 
     // Regardless of whether or not we'll end up invoking
@@ -876,9 +974,9 @@ const matchWrapper = (() => {
     let cachedResponse = yield cache.match(request, matchOptions);
     {
       if (cachedResponse) {
-        defaultExport$1.debug(`Found a cached response in '${cacheName}'.`);
+        defaultExport.debug(`Found a cached response in '${cacheName}'.`);
       } else {
-        defaultExport$1.debug(`No cached response found in '${cacheName}'.`);
+        defaultExport.debug(`No cached response found in '${cacheName}'.`);
       }
     }
     for (let plugin of plugins) {
@@ -891,7 +989,7 @@ const matchWrapper = (() => {
         });
         {
           if (cachedResponse) {
-            finalExports$2.isInstance(cachedResponse, Response, {
+            finalAssertExports.isInstance(cachedResponse, Response, {
               moduleName: 'Plugin',
               funcName: pluginEvents.CACHED_RESPONSE_WILL_BE_USED,
               isReturnValueProblem: true
@@ -934,7 +1032,7 @@ const _isResponseSafeToCache = (() => {
 
         {
           if (responseToCache) {
-            finalExports$2.isInstance(responseToCache, Response, {
+            finalAssertExports.isInstance(responseToCache, Response, {
               moduleName: 'Plugin',
               funcName: pluginEvents.CACHE_WILL_UPDATE,
               isReturnValueProblem: true
@@ -952,9 +1050,9 @@ const _isResponseSafeToCache = (() => {
       {
         if (!responseToCache.ok) {
           if (responseToCache.status === 0) {
-            defaultExport$1.warn(`The response for '${request.url}' is an opaque ` + `response. The caching strategy that you're using will not ` + `cache opaque responses by default.`);
+            defaultExport.warn(`The response for '${request.url}' is an opaque ` + `response. The caching strategy that you're using will not ` + `cache opaque responses by default.`);
           } else {
-            defaultExport$1.debug(`The response for '${request.url}' returned ` + `a status code of '${response.status}' and won't be cached as a ` + `result.`);
+            defaultExport.debug(`The response for '${request.url}' returned ` + `a status code of '${response.status}' and won't be cached as a ` + `result.`);
           }
         }
       }
@@ -969,7 +1067,7 @@ const _isResponseSafeToCache = (() => {
   };
 })();
 
-const exports$2 = {
+const cacheWrapper = {
   put: putWrapper,
   match: matchWrapper
 };
@@ -1010,7 +1108,7 @@ const wrappedFetch = (() => {
     }
 
     {
-      finalExports$2.isInstance(request, Request, {
+      finalAssertExports.isInstance(request, Request, {
         paramName: request,
         expectedClass: 'Request',
         moduleName: 'workbox-core',
@@ -1035,7 +1133,7 @@ const wrappedFetch = (() => {
 
           {
             if (request) {
-              finalExports$2.isInstance(request, Request, {
+              finalAssertExports.isInstance(request, Request, {
                 moduleName: 'Plugin',
                 funcName: pluginEvents.CACHED_RESPONSE_WILL_BE_USED,
                 isReturnValueProblem: true
@@ -1058,12 +1156,12 @@ const wrappedFetch = (() => {
     try {
       const response = yield fetch(request, fetchOptions);
       {
-        defaultExport$1.debug(`Network request for ` + `'${getFriendlyURL(request.url)}' returned a response with ` + `status '${response.status}'.`);
+        defaultExport.debug(`Network request for ` + `'${getFriendlyURL(request.url)}' returned a response with ` + `status '${response.status}'.`);
       }
       return response;
     } catch (err) {
       {
-        defaultExport$1.error(`Network request for ` + `'${getFriendlyURL(request.url)}' threw an error.`, err);
+        defaultExport.error(`Network request for ` + `'${getFriendlyURL(request.url)}' threw an error.`, err);
       }
 
       for (let plugin of failedFetchPlugins) {
@@ -1082,7 +1180,7 @@ const wrappedFetch = (() => {
   };
 })();
 
-const exports$3 = {
+const fetchWrapper = {
   fetch: wrappedFetch
 };
 
@@ -1448,15 +1546,13 @@ DBWrapper.prototype.OPEN_TIMEOUT = 2000;
   limitations under the License.
 */
 
-// We either expose defaults or we expose every named export.
-
 
 var _private = Object.freeze({
-	logger: defaultExport$1,
-	assert: finalExports$2,
-	cacheNames: exports$1,
-	cacheWrapper: exports$2,
-	fetchWrapper: exports$3,
+	logger: defaultExport,
+	assert: finalAssertExports,
+	cacheNames: cacheNames,
+	cacheWrapper: cacheWrapper,
+	fetchWrapper: fetchWrapper,
 	WorkboxError: WorkboxError,
 	DBWrapper: DBWrapper,
 	getFriendlyURL: getFriendlyURL
@@ -1478,7 +1574,7 @@ var _private = Object.freeze({
   limitations under the License.
 */
 
-const finalExports = Object.assign(defaultExport, {
+const finalExports = Object.assign(defaultExport$1, {
   LOG_LEVELS,
   _private
 });
