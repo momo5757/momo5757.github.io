@@ -107,3 +107,24 @@
         - 视觉设计
         - UI/UX
 - year: 2018
+    - title: 研究生毕业
+      content: 东南大学风景园林
+      date: Jun.
+      left: true
+    - title: 深圳三代人科技
+      content: 互联网医疗，大数据产品
+      date: Jul. - Nov.
+      labels:
+        - 网页设计
+        - 视觉设计
+        - UI
+    - title: 深圳思为科技
+      titlelink: "http://www.ideamake.cn"
+      content: 互联网+建筑
+      date: Nov. -
+      left: true
+      labels:
+        - 移动端设计
+        - 视觉设计
+        - UI/UX/PM
+- year: 2019
