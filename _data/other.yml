@@ -1,35 +1,27 @@
-- src: images/other/logo-blur2.jpg
-  title: Shapes
-  desc: AI-Logo
-  doc: |
-    ![](/images/other/logo-blur2.jpg)
-    ![](/images/other/logo-shape.jpg)
-    ![](/images/other/logo-change.jpg)
-- src: images/other/logo-mo.jpg
-  title: MO
-  desc: 模仿Yoga大神
-- src: images/other/logo-museum.jpg
-  title: 湖北省博
-  desc: Logo redesign
-  doc: |
-    ![](/images/other/logo-museum-1.jpg)
-    ![](/images/other/logo-museum-2.jpg)
-- src: images/other/logo-photography.jpg
-  title: 摄影协会
-  desc: Logo design
-  doc: |
-    ![](/images/other/logo-photography-1.jpg)
-- src: images/other/sketch.jpg
-  title: 插画设计
-  desc: AI-矢量插画
-  doc: |
-    ![](/images/other/sketch-1.jpg)
-- src: images/other/little-planet.jpg
-  title: 小小星球
-  desc: 临摹Dribble大神
-- src: images/other/whale.jpg
-  title: Oceans
-  desc: AI-矢量插画
+- src: images/other/sheep-and-girl.jpg
+  title: Girl & Sheep
+  desc: 插画
+- src: images/other/to-the-moon.jpg
+  title: To the moon
+  desc: 插画
+- src: images/other/data-mini-app.jpg
+  title: Data mini app
+  desc: 原型
+- src: images/other/housing-mini-app.jpg
+  title: Housing mini app
+  desc: 原型
+- src: images/other/mia.jpg
+  title: Mia
+  desc: 插画
+- src: images/other/bike.jpg
+  title: Dribbbbbike!
+  desc: 插画
+- src: images/other/pink-building.jpg
+  title: Pink building
+  desc: 插画
+- src: images/other/white-building.jpg
+  title: White building
+  desc: 插画
 - src: images/other/yacht-center.jpg
   title: 游艇中心建筑设计
   desc: 苏州盛泽湖东门
