@@ -553,6 +553,25 @@ title: wzhn.me
       flex: 0 0 100%;
       margin-top: 6px;
     }
+    #reload-toast {
+      position: fixed;
+      bottom: -60px;
+      width: 100%;
+      transition: bottom 0.5s;
+    }
+    #reload-toast.show {
+      bottom: 20px;
+    }
+    .toast {
+      display: inline-block;
+      padding: 16px 24px;
+      color: #fff;
+      background: rgba(124, 111, 174, 0.75);
+    }
+    .toast > a {
+      text-decoration: underline;
+      margin-left: 12px;
+    }
     @media (max-height: 479px) {
       .fab {
         transition: right 0.5s;
@@ -810,6 +829,13 @@ title: wzhn.me
     <div id="overlay-container">
     </div>
   </div>
+  <div id="reload-toast" class="">
+    <div class="toast">
+      <span>页面已更新！</span>
+      <a href="javascript:window.location.reload()">刷新</a>
+      <a href="javascript:hideReloadToast()">关闭</a>
+    </div>
+  </div>
   <script src="{{site.url}}{{site.baseurl}}/smooth-scroll/dist/js/smooth-scroll.polyfills.min.js"></script>
   <script>
     var sections = [];
@@ -921,7 +947,21 @@ title: wzhn.me
         document.getElementById('sw-status').innerHTML = 'SW enabled.';
         registerSW();
       });
+      navigator.serviceWorker.addEventListener('message', function (e) {
+        if (e.data && e.data.type == 'CACHE_UPDATED') {
+          showReloadToast();
+          console.log('Page updated: ', e.data.payload.updatedURL);
+        }
+      });
     }
+    // Page reload toast
+    var reloadToast = document.getElementById('reload-toast');
+    var showReloadToast = function () {
+      reloadToast.className = 'show';
+    };
+    var hideReloadToast = function () {
+      reloadToast.className = '';
+    };
   </script>
 </body>
 <!-- Build with <3 by akasfei. Wherever yours. -->
