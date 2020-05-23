@@ -121,10 +121,19 @@
     - title: 深圳思为科技
       titlelink: "http://www.ideamake.cn"
       content: 互联网+建筑
-      date: Nov. -
+      date: Nov.
       left: true
       labels:
         - 移动端设计
         - 视觉设计
         - UI/UX/PM
-- year: 2019
+- year: 2020
+  events:
+    - title: 中国平安 - 平安银行PBDC
+      titlelink: "https://www.pingan.com"
+      content: 互联网+金融
+      date: Mar.
+      labels:
+        - 产品设计师
+        - UI
+        - 视觉设计
